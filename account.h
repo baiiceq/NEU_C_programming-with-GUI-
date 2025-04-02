@@ -4,6 +4,8 @@
 
 #include "configs.h"
 #include "linked_list.h"
+#include "function_ui.h"
+#include <Windows.h>
 
 typedef enum _AccountType
 {
@@ -38,6 +40,11 @@ bool IsValidUsername(wchar_t* username);
 Account* FindByUsername(wchar_t* username);
 Account* FindById(int id);
 
+void _AddAccount(HWND hWnd);
+void _ChangeAccount(HWND hWnd);
+void _DeleteAccount(HWND hWnd);
+
+void Change_roomid(Account* account, int id);
 
 bool IsValidPassword(wchar_t* password);
 

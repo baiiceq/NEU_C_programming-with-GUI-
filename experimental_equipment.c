@@ -211,6 +211,13 @@ void _DeleteExperimentalEquipment(HWND hWnd)
         HWND hwndListView = GetDlgItem(hWnd, IDC_LISTVIEW);
         ListView_DeleteItem(hwndListView, selectedIndex);
 
+        if (delete_ee->room_id != -1)
+        {
+            LabRoom* labroom = RoomId_to_LabRoom(delete_ee->room_id);
+            DeleteEquipment(labroom, delete_ee->id);
+        }
+        
+
         DestoryExperimentalEquipment(delete_ee);
 
         MessageBox(hWnd, L"Éè±¸ÒÑÉ¾³ý", L"É¾³ý", MB_OK);

@@ -1,6 +1,6 @@
-﻿  lab_room.c
-F:\m\code\keshe_GUI\lab_room.c(38,41): warning C4133: “函数”: 从“char [50]”到“wchar_t *”的类型不兼容
-F:\m\code\keshe_GUI\lab_room.c(235,27): warning C4133: “函数”: 从“char [50]”到“wchar_t *”的类型不兼容
+﻿  account.c
+F:\m\code\keshe_GUI\account.c(114,12): warning C4013: “GetInputNumber”未定义；假设外部返回 int
+F:\m\code\keshe_GUI\account.c(267,32): warning C4133: “函数”: 从“Account *”到“ExperimentalEquipment *”的类型不兼容
   keshe_GUI.vcxproj -> F:\m\code\keshe_GUI\x64\Debug\keshe_GUI.exe
   'pwsh.exe' 不是内部或外部命令，也不是可运行的程序
   或批处理文件。
