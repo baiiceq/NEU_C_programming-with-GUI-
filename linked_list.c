@@ -18,13 +18,7 @@ void destoryLinkedList(LinkedList* list)
     if (list == NULL) return;
 
     Node* current = list->head;
-    while (current != NULL) 
-    {
-        Node* next = current->next;
-        free(current);        
-        current = next;
-    }
-
+    free(current);
     free(list); 
 }
 

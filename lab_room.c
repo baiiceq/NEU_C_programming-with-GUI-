@@ -22,6 +22,9 @@ LabRoom* CreateLabRoom(wchar_t* name)
 
 void DestoryLabRoom(LabRoom* lab_room)
 {
+	destoryLinkedList(lab_room->equipments_list);
+	destoryLinkedList(lab_room->technician_id_list);
+	free(lab_room);
 }
 
 void AddLabRoom()
@@ -82,6 +85,93 @@ void _AddLabRoom(HWND hWnd)
 	ListView_SetItemText(hListView, index, 1, new_labroom->name);
 
 	MessageBox(hWnd, L"创建成功！", L"提示", MB_OK | MB_ICONWARNING);
+}
+
+void _DeleteLabRoom(HWND hWnd)
+{
+	HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+	int selectedIndex = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+	if (selectedIndex == -1)
+	{
+		MessageBox(hWnd, L"未选择设备", L"提示", MB_OK);
+		return;
+	}
+
+	LabRoom* delete_labroom = LinkedList_at(GetResourceManage()->laboratory_list, selectedIndex);
+	wchar_t message[256];
+	swprintf_s(message, sizeof(message) / sizeof(wchar_t), L"确定删除 %s 吗？", delete_labroom->name);
+
+	int result = MessageBox(hWnd, message, L"删除确认", MB_YESNO | MB_ICONQUESTION);
+	if (result == IDYES)
+	{
+		LinkedList_delete(GetResourceManage()->laboratory_list, selectedIndex);
+
+		Node* temp = delete_labroom->equipments_list->head;
+		while (temp->next)
+		{
+			temp = temp->next;
+			int ee_id = *((int*)temp->data);
+			ExperimentalEquipment* ee = id_to_equipment(ee_id);
+			ee->room_id = -1;
+		}
+
+		temp = delete_labroom->technician_id_list->head;
+		while (temp->next)
+		{
+			temp = temp->next;
+			int account_id = *((int*)temp->data);
+			Account* account = FindById(account_id);
+			account->roomid = -1;
+		}
+
+		DestoryLabRoom(delete_labroom);
+
+		HWND hwndListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+		ListView_DeleteItem(hwndListView, selectedIndex);
+
+		MessageBox(hWnd, L"设备已删除", L"删除", MB_OK);
+	}
+	else
+	{
+		return;
+	}
+}
+
+void _ChangeLabRoom(HWND hWnd)
+{
+	HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+	int selectedIndex = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+
+	if (selectedIndex == -1)
+	{
+		MessageBox(hWnd, L"未选择实验室", L"提示", MB_OK);
+		return;
+	}
+
+	int result = MessageBox(hWnd, L"确定要修改吗？", L"修改确认", MB_YESNO | MB_ICONQUESTION);
+	LabRoom* change_lab = LinkedList_at(GetResourceManage()->laboratory_list, selectedIndex);
+	if (result == IDYES)
+	{
+		HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME_CHANGE);
+		if (GetWindowTextLength(hEdit) != 0)
+		{
+			wchar_t name[50];
+			GetDlgItemText(hWnd, IDC_EDIT_NAME_CHANGE, name, sizeof(name) / sizeof(wchar_t));
+			ChangeLabName(change_lab, name);
+		}
+
+		wchar_t idBuffer[16];
+		swprintf_s(idBuffer, 16, L"%d", change_lab->id);
+		ListView_SetItemText(hListView, selectedIndex, 0, idBuffer);
+
+		ListView_SetItemText(hListView, selectedIndex, 1, change_lab->name);
+
+		MessageBox(hWnd, L"设备已修改", L"修改", MB_OK);
+	}
+	else
+	{
+		return;
+	}
 }
 
 bool DeleteLabRoom()
@@ -191,12 +281,7 @@ bool ChangeLabRoom()
 
 bool ChangeLabName(LabRoom* lab_room, wchar_t* newname)
 {
-	printf("%s",newname);
-	if (strcmp(newname, "\n") == 0)
-	{		return False;
-	}
 	wcscpy_s(lab_room->name, LABROOM_LENGTH, newname);
-	printf("修改成功\n");
 	return True;
 }
 

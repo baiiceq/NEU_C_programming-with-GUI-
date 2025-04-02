@@ -51,4 +51,6 @@ LinkedList* EFindByRoom_id(LinkedList* eqlist, int roomid);
 LinkedList* EFindByCategory(LinkedList* eqlist, int categoryid);
 LinkedList* EFindByDate(LinkedList* eqlist, char* start, char* end);
 LinkedList* EFindByPrice(LinkedList* eqlist, int min, int max);
+
+ExperimentalEquipment* id_to_equipment(int id);
 #endif // !EXPERIMENTAL_EQUIPMENT_H

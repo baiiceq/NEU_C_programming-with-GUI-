@@ -22,6 +22,8 @@ void DestoryLabRoom(LabRoom* lab_room);
 void AddLabRoom();
 
 void _AddLabRoom(HWND hWnd);
+void _DeleteLabRoom(HWND hWnd);
+void _ChangeLabRoom(HWND hWnd);
 
 bool ChangeLabRoom();
 bool DeleteLabRoom();

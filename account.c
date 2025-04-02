@@ -3,8 +3,6 @@
 #include "resource_manager.h"
 #include "account.h"
 
-
-
 Account* CreateAccount()
 {
 	Account* new_account = (Account*)malloc(sizeof(Account));

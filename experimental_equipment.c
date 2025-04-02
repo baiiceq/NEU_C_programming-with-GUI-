@@ -27,7 +27,7 @@ ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* 
 
 void DestoryExperimentalEquipment(ExperimentalEquipment* experimental_equipment)
 {
-
+    free(experimental_equipment);
 }
 
 void AddExperimentalEquipment()
@@ -210,6 +210,8 @@ void _DeleteExperimentalEquipment(HWND hWnd)
 
         HWND hwndListView = GetDlgItem(hWnd, IDC_LISTVIEW);
         ListView_DeleteItem(hwndListView, selectedIndex);
+
+        DestoryExperimentalEquipment(delete_ee);
 
         MessageBox(hWnd, L"Éè±¸ÒÑÉ¾³ı", L"É¾³ı", MB_OK);
     }
@@ -495,4 +497,18 @@ LinkedList* EFindByPrice(LinkedList* eqlist, int min, int max)
         destoryLinkedList(eqlist);
     }
 	return list;
+}
+
+ExperimentalEquipment* id_to_equipment(int id)
+{
+    Node* temp = GetResourceManage()->equipment_list->head;
+    LinkedList* l = GetResourceManage()->equipment_list;
+    while (temp->next)
+    {
+        temp = temp->next;
+        ExperimentalEquipment* ee = (ExperimentalEquipment*)temp->data;
+        if (id == ee->id)
+            return ee;
+    }
+    return NULL;
 }

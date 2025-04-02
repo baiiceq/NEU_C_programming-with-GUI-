@@ -233,6 +233,11 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         CreateWindow(L"STATIC", L"房间名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 60, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
         CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 60, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME, NULL, NULL);
 
+        CreateWindow(L"STATIC", L"修改内容", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 390, 180, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"新名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 220, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 220, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME_CHANGE, NULL, NULL);
+
         HWND hListView = CreateWindowExW(0, WC_LISTVIEW, NULL,
             WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_EDITLABELS,
             30, 200, 280, 260, hWnd, (HMENU)IDC_LISTVIEW, GetModuleHandle(NULL), NULL);
@@ -348,6 +353,11 @@ LRESULT CALLBACK InfoManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
                 _DeleteExperimentalEquipment(hWnd);
                 break;
             }
+            case 1:
+            {
+                _DeleteLabRoom(hWnd);
+                break;
+            }
             }
             
             break;
@@ -363,6 +373,13 @@ LRESULT CALLBACK InfoManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
                 hEdit = GetDlgItem(hWnd, IDC_EDIT_PRICE_CHANGE);
                 SetWindowTextW(hEdit, L"");
                 hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
+                SetWindowTextW(hEdit, L"");
+                break;
+            }
+            case 1:
+            {
+                _ChangeLabRoom(hWnd);
+                HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME_CHANGE);
                 SetWindowTextW(hEdit, L"");
                 break;
             }

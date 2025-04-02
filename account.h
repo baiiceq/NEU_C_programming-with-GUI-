@@ -33,13 +33,13 @@ void DestoryAccount(Account* account);
 bool ValidAccount(Account* account);
 
 // 判断用户名是否有效
-bool IsValidUsername(char* username);
+bool IsValidUsername(wchar_t* username);
 
 Account* FindByUsername(wchar_t* username);
 Account* FindById(int id);
 
 
-bool IsValidPassword(char* password);
+bool IsValidPassword(wchar_t* password);
 
 bool IsCorrectAccount(Account* account);
 

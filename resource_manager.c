@@ -236,7 +236,7 @@ bool SaveCategoryList()
 
 bool LoadLaboratoryList()
 {
-	FILE* fp = fopen("laboratory.txt", "r");
+	FILE* fp = _wfopen(L"laboratory.txt", L"r");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
@@ -266,7 +266,7 @@ bool LoadLaboratoryList()
 
 bool SaveLaboratoryList()
 {
-	FILE* fp = _wfopen(L"laboratory.txt", L"r");
+	FILE* fp = _wfopen(L"laboratory.txt", L"w");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
