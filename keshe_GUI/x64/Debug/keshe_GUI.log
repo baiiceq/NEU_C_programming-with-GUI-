@@ -1,0 +1,39 @@
+﻿  experimental_equipment.c
+F:\m\code\keshe_GUI\experimental_equipment.c(19,48): warning C4020: “wcscpy_s”: 实参太多
+F:\m\code\keshe_GUI\experimental_equipment.c(22,61): warning C4020: “wcscpy_s”: 实参太多
+F:\m\code\keshe_GUI\experimental_equipment.c(50,16): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“wchar_t *”
+  F:\m\code\keshe_GUI\experimental_equipment.c(50,16):
+  请考虑在格式字符串中使用“%ls”
+  F:\m\code\keshe_GUI\experimental_equipment.c(50,16):
+  请考虑在格式字符串中使用“%lls”
+  F:\m\code\keshe_GUI\experimental_equipment.c(50,16):
+  请考虑在格式字符串中使用“%Ls”
+  F:\m\code\keshe_GUI\experimental_equipment.c(50,16):
+  请考虑在格式字符串中使用“%ws”
+  
+F:\m\code\keshe_GUI\experimental_equipment.c(93,79): warning C4133: “函数”: 从“char [50]”到“wchar_t *”的类型不兼容
+F:\m\code\keshe_GUI\experimental_equipment.c(93,101): warning C4133: “函数”: 从“char [11]”到“wchar_t *”的类型不兼容
+F:\m\code\keshe_GUI\experimental_equipment.c(132,15): warning C4013: “GetInputNumber”未定义；假设外部返回 int
+F:\m\code\keshe_GUI\experimental_equipment.c(144,17): warning C4244: “初始化”: 从“LRESULT”转换到“int”，可能丢失数据
+F:\m\code\keshe_GUI\experimental_equipment.c(278,25): warning C4244: “初始化”: 从“LRESULT”转换到“int”，可能丢失数据
+F:\m\code\keshe_GUI\experimental_equipment.c(360,22): warning C4133: “函数”: 从“wchar_t [50]”到“const char *”的类型不兼容
+F:\m\code\keshe_GUI\experimental_equipment.c(461,16): warning C4133: “函数”: 从“wchar_t [11]”到“const char *”的类型不兼容
+F:\m\code\keshe_GUI\experimental_equipment.c(461,57): warning C4133: “函数”: 从“wchar_t [11]”到“const char *”的类型不兼容
+  lab_room.c
+F:\m\code\keshe_GUI\lab_room.c(35,41): warning C4133: “函数”: 从“char [50]”到“wchar_t *”的类型不兼容
+F:\m\code\keshe_GUI\lab_room.c(145,27): warning C4133: “函数”: 从“char [50]”到“wchar_t *”的类型不兼容
+F:\m\code\keshe_GUI\lab_room.c(194,9): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 1 拥有了类型“wchar_t *”
+  F:\m\code\keshe_GUI\lab_room.c(194,9):
+  请考虑在格式字符串中使用“%ls”
+  F:\m\code\keshe_GUI\lab_room.c(194,9):
+  请考虑在格式字符串中使用“%lls”
+  F:\m\code\keshe_GUI\lab_room.c(194,9):
+  请考虑在格式字符串中使用“%Ls”
+  F:\m\code\keshe_GUI\lab_room.c(194,9):
+  请考虑在格式字符串中使用“%ws”
+  
+F:\m\code\keshe_GUI\lab_room.c(195,13): warning C4133: “函数”: 从“wchar_t *”到“const char *”的类型不兼容
+  正在生成代码...
+  keshe_GUI.vcxproj -> F:\m\code\keshe_GUI\x64\Debug\keshe_GUI.exe
+  'pwsh.exe' 不是内部或外部命令，也不是可运行的程序
+  或批处理文件。
