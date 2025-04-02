@@ -365,7 +365,10 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         }
         break;
     }
+    case 3:
+    {
 
+    }
     }
 }
 
