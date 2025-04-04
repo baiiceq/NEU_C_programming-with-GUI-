@@ -550,6 +550,4 @@ void ShowStatisticsWindow(HWND hWnd)
 {
 }
 
-void ShowSystemMaintenanceWindow(HWND hWnd)
-{
-}
+

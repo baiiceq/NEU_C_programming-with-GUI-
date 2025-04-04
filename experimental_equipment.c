@@ -16,10 +16,10 @@ ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* 
 
     ee->id = GetNewId(EquipmentID);
     ee->category = category;
-    wcscpy_s(ee->name, EQUIPMENT_LENGTH, name, _TRUNCATE);
+    wcscpy_s(ee->name, EQUIPMENT_LENGTH, name);
     ee->price = price;
     ee->room_id = room_id;
-    wcscpy_s(ee->purchase_date, DATE_LENGTH, purchase_date, _TRUNCATE);
+    wcscpy_s(ee->purchase_date, DATE_LENGTH, purchase_date);
 
     return ee;
 
