@@ -227,7 +227,7 @@ bool LoadCategoryList(wchar_t* path)
 
 bool SaveCategoryList(wchar_t* path)
 {
-	FILE* fp = _wfopen(path, L"w");
+	FILE* fp = _wfopen(path, L"wb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");

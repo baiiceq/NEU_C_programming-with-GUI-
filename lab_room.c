@@ -93,7 +93,7 @@ void _DeleteLabRoom(HWND hWnd)
 	int selectedIndex = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 	if (selectedIndex == -1)
 	{
-		MessageBox(hWnd, L"未选择设备", L"提示", MB_OK);
+		MessageBox(hWnd, L"未选择实验室", L"提示", MB_OK);
 		return;
 	}
 

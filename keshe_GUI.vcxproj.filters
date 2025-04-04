@@ -70,18 +70,9 @@
     <ClCompile Include="function_ui.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="function_ui2.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="systemmaintenance.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="account.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="category.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="configs.h">
@@ -132,10 +123,7 @@
     <ClInclude Include="function_ui.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="function_ui2.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="systemmaintenance.h">
+    <ClInclude Include="category.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
