@@ -19,20 +19,22 @@ ResourceManager* GetResourceManage();
 void _LoadResource();
 void SaveResource();
 
-bool LoadAccountList();
-bool SaveAccountList();
+bool LoadAccountList(wchar_t*);
+bool SaveAccountList(wchar_t*);
 
 
-bool LoadEquipmentList();
-bool SaveEquipmentList();
+bool LoadEquipmentList(wchar_t*);
+bool SaveEquipmentList(wchar_t*);
 
 
-bool LoadCategoryList();
-bool SaveCategoryList();
+bool LoadCategoryList(wchar_t*);
+bool SaveCategoryList(wchar_t*);
 
 
-bool LoadLaboratoryList();
-bool SaveLaboratoryList();
+bool LoadLaboratoryList(wchar_t*);
+bool SaveLaboratoryList(wchar_t*);
+
+bool SaveBackUp(char* time, char* formattedTime);
 
 void DestoryResourceManage();
 

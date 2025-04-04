@@ -138,6 +138,7 @@
     <ClCompile Include="equipment_management.c" />
     <ClCompile Include="experimental_equipment.c" />
     <ClCompile Include="function_ui.c" />
+    <ClCompile Include="function_ui2.c" />
     <ClCompile Include="id_manager.c" />
     <ClCompile Include="info_operations.c" />
     <ClCompile Include="lab_room.c" />
@@ -148,6 +149,7 @@
     <ClCompile Include="register_interface.c" />
     <ClCompile Include="resource_manager.c" />
     <ClCompile Include="main_ui.c" />
+    <ClCompile Include="systemmaintenance.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="account.h" />
@@ -156,6 +158,7 @@
     <ClInclude Include="equipment_management.h" />
     <ClInclude Include="experimental_equipment.h" />
     <ClInclude Include="function_ui.h" />
+    <ClInclude Include="function_ui2.h" />
     <ClInclude Include="id_manager.h" />
     <ClInclude Include="info_operations.h" />
     <ClInclude Include="lab_room.h" />
@@ -168,6 +171,7 @@
     <ClInclude Include="sort.h" />
     <ClInclude Include="statistics.h" />
     <ClInclude Include="main_ui.h" />
+    <ClInclude Include="systemmaintenance.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="account.txt" />

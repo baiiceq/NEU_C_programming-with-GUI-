@@ -29,18 +29,28 @@ ResourceManager* GetResourceManage()
 
 void _LoadResource()
 {
-	LoadLaboratoryList();
-	LoadAccountList();
-	LoadCategoryList();
-	LoadEquipmentList();
+	wchar_t path[100];
+	wcscpy_s(path,100 , L"laboratory.txt");
+	LoadLaboratoryList(path);
+	wcscpy_s(path, 100, L"account.txt");
+	LoadAccountList(path);
+	wcscpy_s(path, 100, L"category.txt");
+	LoadCategoryList(path);
+	wcscpy_s(path, 100, L"equipment.txt");
+	LoadEquipmentList(path);
 }
 
 void SaveResource()
 {
-	SaveAccountList();
-	SaveCategoryList();
-	SaveEquipmentList();
-	SaveLaboratoryList();
+	wchar_t path[100];
+	wcscpy_s(path, 100, L"account.txt");
+	SaveAccountList(path);
+	wcscpy_s(path, 100, L"category.txt");
+	SaveCategoryList(path);
+	wcscpy_s(path, 100, L"equipment.txt");
+	SaveEquipmentList(path);
+	wcscpy_s(path, 100, L"laboratory.txt");
+	SaveLaboratoryList(path);
 }
 
 void DestoryResourceManage()
@@ -53,9 +63,9 @@ void DestoryResourceManage()
     destoryLinkedList(instance->laboratory_list);
 }
 
-bool LoadAccountList()
+bool LoadAccountList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"account.txt", L"rb");
+	FILE* fp = _wfopen(path, L"rb");
 	if (fp == NULL)
 	{
 		MessageBoxW(NULL, L"账户文件打开失败", L"错误", MB_ICONERROR);
@@ -103,9 +113,9 @@ bool LoadAccountList()
 	return True;
 }
 
-bool SaveAccountList()
+bool SaveAccountList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"account.txt", L"wb");
+	FILE* fp = _wfopen(path, L"wb");
 	if (!fp)
 	{
 		MessageBoxW(NULL, L"账户文件保存失败", L"错误", MB_ICONERROR);
@@ -144,9 +154,9 @@ bool SaveAccountList()
 	return True;
 }
 
-bool LoadEquipmentList()
+bool LoadEquipmentList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"equipment.txt", L"rb");
+	FILE* fp = _wfopen(path, L"rb");
 	if (fp == NULL) 
 	{
 		printf("打开文件失败\n");
@@ -191,9 +201,9 @@ bool LoadEquipmentList()
 	return False;
 }
 
-bool SaveEquipmentList()
+bool SaveEquipmentList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"equipment.txt", L"wb");
+	FILE* fp = _wfopen(path, L"wb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
@@ -216,9 +226,9 @@ bool SaveEquipmentList()
 	return False;
 }
 
-bool LoadCategoryList()
+bool LoadCategoryList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"category.txt", L"rb");
+	FILE* fp = _wfopen(path, L"rb");
 	if (fp == NULL)
 	{
 		perror("文件打开失败\n");
@@ -251,9 +261,9 @@ bool LoadCategoryList()
 	return False;
 }
 
-bool SaveCategoryList()
+bool SaveCategoryList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"category.txt", L"wb");
+	FILE* fp = _wfopen(path, L"wb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
@@ -274,9 +284,9 @@ bool SaveCategoryList()
 	return False;
 }
 
-bool LoadLaboratoryList()
+bool LoadLaboratoryList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"laboratory.txt", L"rb");
+	FILE* fp = _wfopen(path, L"rb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
@@ -313,9 +323,9 @@ bool LoadLaboratoryList()
 	return True;
 }
 
-bool SaveLaboratoryList()
+bool SaveLaboratoryList(wchar_t* path)
 {
-	FILE* fp = _wfopen(L"laboratory.txt", L"wb");
+	FILE* fp = _wfopen(path, L"wb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
@@ -334,4 +344,25 @@ bool SaveLaboratoryList()
 		temp = temp->next;
 	}
 	return True;
+}
+
+//备份文件
+bool SaveBackUp(char* time, char* formattedTime)
+{
+	char str[100];
+	snprintf(str, 100, "backups/%s/readme.txt", formattedTime);
+	FILE* fp = fopen(str, "w");
+	if (fp == NULL)
+	{
+		printf("文件打开失败\n");
+		return False;
+	}
+	fprintf(fp, "=== 系统备份信息 ===\n");
+	fprintf(fp, "备份时间%s\n", time);
+	ResourceManager* rm = GetResourceManage();
+	fprintf(fp, "账户数据备份共 %zu 条记录\n", rm->account_list->size);
+	fprintf(fp, "设备数据备份共 %zu 条记录\n", rm->equipment_list->size);
+	fprintf(fp, "设备类别数据备份共 %zu 条记录\n", rm->category_list->size);
+	fprintf(fp, "实验室数据备份共 %zu 条记录\n", rm->laboratory_list->size);
+	fclose(fp);
 }

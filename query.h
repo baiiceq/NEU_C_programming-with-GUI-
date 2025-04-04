@@ -5,6 +5,8 @@
 #include "account.h"
 #include "configs.h"
 
+#include <Windows.h>
+
 typedef bool (*QueryCondition)(void* data, void* param);
 
 void Query(LinkedList* list, QueryCondition condition, void* param, void (*PrintResult)(void*))
@@ -432,4 +434,9 @@ void QueryCategoryMenu()
     query.id = id;
 
     Query(list, QueryCategoryCondition, &query, PrintCategory);
+}
+
+void ShowQueryWindow(HWND hWnd)
+{
+
 }

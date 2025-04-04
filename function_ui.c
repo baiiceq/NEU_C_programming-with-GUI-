@@ -625,13 +625,6 @@ void ShowInfoManagementWindow(HWND hWnd)
     UpdateWindow(hwndfunc1);
 }
 
-void ShowAdjustManagementWindow(HWND hWnd)
-{
-}
-
-void ShowQueryWindow(HWND hWnd)
-{
-}
 
 void ShowSortWindow(HWND hWnd)
 {
@@ -641,6 +634,4 @@ void ShowStatisticsWindow(HWND hWnd)
 {
 }
 
-void ShowSystemMaintenanceWindow(HWND hWnd)
-{
-}
+

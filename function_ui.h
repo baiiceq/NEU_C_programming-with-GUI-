@@ -34,12 +34,8 @@
 
 void ShowInfoManagementWindow(HWND hWnd);
 
-void ShowAdjustManagementWindow(HWND hWnd);
-
-void ShowQueryWindow(HWND hWnd);
-
 void ShowSortWindow(HWND hWnd);
 
 void ShowStatisticsWindow(HWND hWnd);
 
-void ShowSystemMaintenanceWindow(HWND hWnd);
+

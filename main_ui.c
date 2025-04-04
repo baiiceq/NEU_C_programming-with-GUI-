@@ -5,6 +5,7 @@
 #include "resource_manager.h"
 #include "equipment_management.h"
 #include <string.h>
+#include "function_ui2.h"
 
 extern EquipmentManagement* em;
 
@@ -46,7 +47,7 @@ LRESULT CALLBACK LoginWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 MessageBox(hWnd, L"登录成功！", L"提示", MB_OK);
 
-                em->current_account = account;
+                em->current_account = FindByUsername(account->user_name);
 
                 switch (em->current_account->account_type)
                 {
@@ -222,7 +223,7 @@ LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             //ShowStatisticsWindow(hWnd);
             break;
         case ID_BTN_SYSTEM_MAINT:
-            //ShowSystemMaintenanceWindow(hWnd);
+            ShowSystemMaintenanceWindow(hWnd);
             break;
         case ID_BTN_EXIT:
             em->current_account = NULL;
