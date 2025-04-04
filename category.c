@@ -102,14 +102,14 @@ void _DeleteCategory(HWND hWnd)
 		return;
 	}
 
-	LabRoom* delete_category = LinkedList_at(GetResourceManage()->laboratory_list, selectedIndex);
+	LabRoom* delete_category = LinkedList_at(GetResourceManage()->category_list, selectedIndex);
 	wchar_t message[256];
 	swprintf_s(message, sizeof(message) / sizeof(wchar_t), L"确定删除 %s 吗？", delete_category->name);
 
 	int result = MessageBox(hWnd, message, L"删除确认", MB_YESNO | MB_ICONQUESTION);
 	if (result == IDYES)
 	{
-		LinkedList_delete(GetResourceManage()->laboratory_list, selectedIndex);
+		LinkedList_delete(GetResourceManage()->category_list, selectedIndex);
 		Category* none_category = CreateCategory(L"无", 0);
 
 		Node* temp = GetResourceManage()->equipment_list->head;

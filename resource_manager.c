@@ -55,12 +55,22 @@ void DestoryResourceManage()
 
 bool LoadAccountList()
 {
-	FILE* fp = _wfopen(L"account.txt", L"r, ccs=UTF-8");
+	FILE* fp = _wfopen(L"account.txt", L"rb");
 	if (fp == NULL)
 	{
 		MessageBoxW(NULL, L"账户文件打开失败", L"错误", MB_ICONERROR);
 		return False;
 	}
+
+	wchar_t bom;
+	fread(&bom, sizeof(wchar_t), 1, fp);
+	if (bom != 0xFEFF)
+	{
+		wprintf(L"不是有效的UTF-16文件！\n");
+		fclose(fp);
+		return False;
+	}
+
 	ResourceManager* resource_manager = GetResourceManage();
 	wchar_t str[15] = L"";
 	while (!feof(fp))
@@ -95,12 +105,16 @@ bool LoadAccountList()
 
 bool SaveAccountList()
 {
-	FILE* fp = _wfopen(L"account.txt", L"w, ccs=UTF-8");
+	FILE* fp = _wfopen(L"account.txt", L"wb");
 	if (!fp)
 	{
 		MessageBoxW(NULL, L"账户文件保存失败", L"错误", MB_ICONERROR);
 		return False;
 	}
+
+	wchar_t bom = 0xFEFF;
+	fwrite(&bom, sizeof(wchar_t), 1, fp);
+
 	Node* temp = GetResourceManage()->account_list->head->next;
 	while (temp)
 	{
@@ -132,7 +146,7 @@ bool SaveAccountList()
 
 bool LoadEquipmentList()
 {
-	FILE* fp = _wfopen(L"equipment.txt", L"r");
+	FILE* fp = _wfopen(L"equipment.txt", L"rb");
 	if (fp == NULL) 
 	{
 		printf("打开文件失败\n");
@@ -140,6 +154,15 @@ bool LoadEquipmentList()
 	}
 	ResourceManager* resource_manager = GetResourceManage();
 	int category_id = 0;
+
+	wchar_t bom;
+	fread(&bom, sizeof(wchar_t), 1, fp);
+	if (bom != 0xFEFF)
+	{
+		wprintf(L"不是有效的UTF-16文件！\n");
+		fclose(fp);
+		return False;
+	}
 
 	//此处如果是用feof读取空文件将会非常危险，后面相似的地方也是
 	while (!feof(fp))
@@ -170,12 +193,16 @@ bool LoadEquipmentList()
 
 bool SaveEquipmentList()
 {
-	FILE* fp = _wfopen(L"equipment.txt", L"w");
+	FILE* fp = _wfopen(L"equipment.txt", L"wb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
 		return False;
 	}
+
+	wchar_t bom = 0xFEFF;
+	fwrite(&bom, sizeof(wchar_t), 1, fp);
+
 	Node* temp = GetResourceManage()->equipment_list->head->next;
 	while (temp)
 	{
@@ -191,12 +218,21 @@ bool SaveEquipmentList()
 
 bool LoadCategoryList()
 {
-	FILE* fp = _wfopen(L"category.txt", L"r");
+	FILE* fp = _wfopen(L"category.txt", L"rb");
 	if (fp == NULL)
 	{
 		perror("文件打开失败\n");
 		return False;
 	}
+	wchar_t bom;
+	fread(&bom, sizeof(wchar_t), 1, fp);
+	if (bom != 0xFEFF)
+	{
+		wprintf(L"不是有效的UTF-16文件！\n");
+		fclose(fp);
+		return False;
+	}
+
 	ResourceManager* resource_manager = GetResourceManage();
 	while (!feof(fp))
 	{
@@ -223,6 +259,10 @@ bool SaveCategoryList()
 		printf("文件打开失败\n");
 		return False;
 	}
+
+	wchar_t bom = 0xFEFF;
+	fwrite(&bom, sizeof(wchar_t), 1, fp);
+	
 	Node* temp = GetResourceManage()->category_list->head->next;
 	while (temp)
 	{
@@ -236,10 +276,19 @@ bool SaveCategoryList()
 
 bool LoadLaboratoryList()
 {
-	FILE* fp = _wfopen(L"laboratory.txt", L"r");
+	FILE* fp = _wfopen(L"laboratory.txt", L"rb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
+		return False;
+	}
+
+	wchar_t bom;
+	fread(&bom, sizeof(wchar_t), 1, fp);
+	if (bom != 0xFEFF)
+	{
+		wprintf(L"不是有效的UTF-16文件！\n");
+		fclose(fp);
 		return False;
 	}
 	ResourceManager* resource_manager = GetResourceManage();
@@ -266,12 +315,15 @@ bool LoadLaboratoryList()
 
 bool SaveLaboratoryList()
 {
-	FILE* fp = _wfopen(L"laboratory.txt", L"w");
+	FILE* fp = _wfopen(L"laboratory.txt", L"wb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
 		return False;
 	}
+
+	wchar_t bom = 0xFEFF;
+	fwrite(&bom, sizeof(wchar_t), 1, fp);
 
 	Node* temp = GetResourceManage()->laboratory_list->head->next;
 	

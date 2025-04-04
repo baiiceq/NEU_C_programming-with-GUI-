@@ -97,7 +97,7 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         CreateWindow(L"STATIC", L"设备种类", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 100, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
         HWND hComboBox = CreateWindow(L"COMBOBOX", NULL,
             WS_VISIBLE | WS_CHILD | CBS_DROPDOWN | WS_BORDER,
-            400, 100, 130, 100, hWnd, (HMENU)IDC_COMBOX_CATEGORY, GetModuleHandle(NULL), NULL);
+            400, 100, 130, 300, hWnd, (HMENU)IDC_COMBOX_CATEGORY, GetModuleHandle(NULL), NULL);
 
         Node* temp = rm->category_list->head;
         size_t count = rm->category_list->size;
@@ -129,7 +129,7 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         CreateWindow(L"STATIC", L"新种类", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 380, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
         hComboBox = CreateWindow(L"COMBOBOX", NULL,
             WS_VISIBLE | WS_CHILD | CBS_DROPDOWN | WS_BORDER,
-            400, 380, 130, 100, hWnd, (HMENU)IDC_COMBOX_CATEGORY_CHANGE, GetModuleHandle(NULL), NULL);
+            400, 380, 130, 300, hWnd, (HMENU)IDC_COMBOX_CATEGORY_CHANGE, GetModuleHandle(NULL), NULL);
 
         temp = rm->category_list->head;
         for (size_t i = 0; i < count; i++)
