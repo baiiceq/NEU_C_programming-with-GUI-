@@ -55,12 +55,15 @@ void SaveResource()
 
 void DestoryResourceManage()
 {
-    if (instance == NULL)
-        return;
+	if (instance == NULL)
+		return;
 
-    destoryLinkedList(instance->account_list);
-    destoryLinkedList(instance->equipment_list);
-    destoryLinkedList(instance->laboratory_list);
+	destoryLinkedList(instance->account_list);
+	destoryLinkedList(instance->equipment_list);
+	destoryLinkedList(instance->laboratory_list);
+	destoryLinkedList(instance->category_list);
+	//destoryLinkedList(instance->service_list);
+	instance = NULL;
 }
 
 bool LoadAccountList(wchar_t* path)

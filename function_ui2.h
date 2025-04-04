@@ -30,6 +30,8 @@
 
 //修改其他用户用户名界面控件ID
 #define IDC_BTN_CHANGE_USERNAME     1401
+//数据恢复窗口ID
+#define IDC_RESTORE_TIME                1402
 
 // 系统维护窗口过程函数
 LRESULT CALLBACK SystemMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -41,6 +43,7 @@ LRESULT CALLBACK PasswordMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, 
 LRESULT CALLBACK ResetPasswordWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChangeUsernameWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChangeUserUsernameWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK RestoreDataWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // 显示系统维护窗口
 void ShowSystemMaintenanceWindow(HWND hWnd);
@@ -52,6 +55,8 @@ void ShowPasswordMaintenanceWindow(HWND hWnd);
 void ShowResetPasswordWindow(HWND hWnd);
 void ShowChangeUsernameWindow(HWND hWnd);
 void ShowChangeUserUsernameWindow(HWND hWnd);
+void ShowRestoreDataWindow(HWND hWnd);
+
 
 // 填充用户列表
 void FillUserList(HWND hListView);

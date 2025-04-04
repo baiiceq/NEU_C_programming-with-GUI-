@@ -160,16 +160,25 @@ bool BackupSystemData(int adminId)
 
     system(mkdirCmd);
     char path[100];
+	wchar_t wpath[100];
+    size_t converted_chars;
     // 创建备份头文件，类似于readme
     SaveBackUp(time, formattedTime);
     snprintf(path, 100, "backups/%s/account.txt", formattedTime);
-    SaveAccountList(path);
+    mbstowcs_s(&converted_chars, wpath, 100, path, _TRUNCATE);
+    SaveAccountList(wpath);
+
     snprintf(path, 100, "backups/%s/category.txt", formattedTime);
-    SaveCategoryList(path);
+    mbstowcs_s(&converted_chars, wpath, 100, path, _TRUNCATE);
+    SaveCategoryList(wpath);
+
     snprintf(path, 100, "backups/%s/equipment.txt", formattedTime);
-    SaveEquipmentList(path);
+    mbstowcs_s(&converted_chars, wpath, 100, path, _TRUNCATE);
+    SaveEquipmentList(wpath);
+
     snprintf(path, 100, "backups/%s/laboratory.txt", formattedTime);
-    SaveLaboratoryList(path);
+    mbstowcs_s(&converted_chars, wpath, 100, path, _TRUNCATE);
+    SaveLaboratoryList(wpath);
     LogSystemOperation("系统备份", adminId);
 
     printf("系统数据备份完成，保存在: %s\n", backupDir);
@@ -178,41 +187,25 @@ bool BackupSystemData(int adminId)
 }
 
 // 恢复系统数据
-bool RestoreSystemData(int adminId)
+bool RestoreSystemData(int adminId,wchar_t* formattedtime)
 {
-    char confirmInput;
-    printf("警告：恢复操作将覆盖当前所有数据！继续？(Y/N): ");
-    printf("建议备份当前节点数据\n");
-    scanf_s("%c", &confirmInput, 1);
-    getchar();
-
-    if (confirmInput != 'Y' && confirmInput != 'y') {
-        printf("已取消恢复操作\n");
-        return false;
-    }
-
-    printf("请输入要恢复至的结点时间/文件夹名\n");
-    char formattedtime[50];
-    scanf_s("%s", formattedtime, 100);
-    fflush(stdin);
     char operation[50];
-    snprintf(operation, sizeof(operation), "系统数据恢复至%s", formattedtime);
+    char lformattedtime[100];
+	wcstombs_s(NULL, lformattedtime, sizeof(lformattedtime), formattedtime, _TRUNCATE);
+    snprintf(operation, sizeof(operation), "系统数据恢复至%s", lformattedtime);
     LogSystemOperation(operation, adminId);
     DestoryResourceManage();
-    char path[100];
-    snprintf(path, sizeof(path), "backups/%s/account.txt", formattedtime);
-    LoadAccountList(path);
-    snprintf(path, sizeof(path), "backups/%s/category.txt", formattedtime);
-    LoadCategoryList(path);
-    snprintf(path, sizeof(path), "backups/%s/equipment.txt", formattedtime);
-    LoadEquipmentList(path);
-    snprintf(path, sizeof(path), "backups/%s/laboratory.txt", formattedtime);
+    wchar_t path[100];
+    swprintf_s(path, sizeof(path) / sizeof(wchar_t), L"backups/%s/laboratory.txt", formattedtime);
     LoadLaboratoryList(path);
+    swprintf_s(path, sizeof(path) / sizeof(wchar_t), L"backups/%s/account.txt", formattedtime);
+    LoadAccountList(path);
+    swprintf_s(path, sizeof(path) / sizeof(wchar_t), L"backups/%s/category.txt", formattedtime);
+    LoadCategoryList(path);
+    swprintf_s(path, sizeof(path) / sizeof(wchar_t), L"backups/%s/equipment.txt", formattedtime);
+    LoadEquipmentList(path);
     SaveResource();
-    printf("系统数据恢复成功\n");
-    printf("即将关闭系统，请手动重启\n");
-
-    system("pause");
-    exit(0);
+	MessageBox(NULL, L"数据恢复成功，请手动重启", L"提示", MB_OK | MB_ICONINFORMATION);
+    ExitProcess(0);
     return true;
 }
