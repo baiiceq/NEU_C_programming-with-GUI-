@@ -4,7 +4,7 @@
 
 extern HWND hwndAdminManagement;
 
-HWND hwndfunc1, hwndfunc2, hwndfunc3, hwndfunc4, hwndfunc5, hwndfunc6;
+HWND hwndfunc1;
 HWND hMainTab;
 
 int GetInputNumber(HWND hwnd, int editControlID)
@@ -65,6 +65,11 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         DestroyWindow(hEdit);
     while ((hEdit = GetDlgItem(hWnd, IDC_STATIC_1)) != NULL)
         DestroyWindow(hEdit);
+    while ((hEdit = GetDlgItem(hWnd, IDC_BUTTON_EXIT)) != NULL)
+        DestroyWindow(hEdit);
+
+    CreateWindow(L"BUTTON", L"·µ»Ø", WS_VISIBLE | WS_CHILD,
+        600, 495, 120, 40, hWnd, (HMENU)IDC_BUTTON_EXIT, GetModuleHandle(NULL), NULL);
 
     ResourceManager* rm = GetResourceManage();
 
@@ -591,6 +596,11 @@ LRESULT CALLBACK InfoManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
                 break;
             }
             }
+            break;
+        case IDC_BUTTON_EXIT:
+            ShowWindow(hwndfunc1, SW_HIDE);
+            hwndfunc1 = NULL;
+            ShowWindow(hwndAdminManagement, SW_SHOW);
             break;
         }
         break;
