@@ -264,7 +264,7 @@ void _DeleteAccount(HWND hWnd)
 			LabRoom* labroom = RoomId_to_LabRoom(delete_account->roomid);
 			DeleteTechnician(labroom, delete_account->id);
 		}
-		DestoryExperimentalEquipment(delete_account);
+		DestoryAccount(delete_account);
 
 		MessageBox(hWnd, L"Éè±¸ÒÑÉ¾³ý", L"É¾³ý", MB_OK);
 	}

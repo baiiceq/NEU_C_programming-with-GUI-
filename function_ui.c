@@ -367,7 +367,73 @@ void CreateButtons1(HWND hWnd, int tabIndex)
     }
     case 3:
     {
+        CreateWindow(L"BUTTON", L"添加", WS_VISIBLE | WS_CHILD,
+            600, 80, 120, 40, hWnd, (HMENU)IDC_BUTTON_ADD, GetModuleHandle(NULL), NULL);
+        CreateWindow(L"BUTTON", L"删除", WS_VISIBLE | WS_CHILD,
+            600, 240, 120, 40, hWnd, (HMENU)IDC_BUTTON_DELETE, GetModuleHandle(NULL), NULL);
+        CreateWindow(L"BUTTON", L"修改", WS_VISIBLE | WS_CHILD,
+            600, 400, 120, 40, hWnd, (HMENU)IDC_BUTTON_MODIFY, GetModuleHandle(NULL), NULL);
 
+        CreateWindow(L"STATIC", L"类型名称", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 60, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 60, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME, NULL, NULL);
+        CreateWindow(L"STATIC", L"类型报废年限", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 100, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 100, 130, 25, hWnd, (HMENU)IDC_EDIT_ROOM_ID, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"修改内容", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 390, 180, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"新名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 220, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 220, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME_CHANGE, NULL, NULL);
+        CreateWindow(L"STATIC", L"新报废年限", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 300, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 300, 130, 25, hWnd, (HMENU)IDC_EDIT_ROOM_ID_CHANGE, NULL, NULL);
+
+
+        HWND hListView = CreateWindowExW(0, WC_LISTVIEW, NULL,
+            WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_EDITLABELS,
+            30, 200, 280, 260, hWnd, (HMENU)IDC_LISTVIEW, GetModuleHandle(NULL), NULL);
+
+        ListView_DeleteAllItems(hListView);
+
+        LVCOLUMNW lvc;
+        lvc.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+
+        lvc.pszText = L"类型ID";
+        lvc.cx = 60;
+        lvc.iSubItem = 0;
+        ListView_InsertColumn(hListView, 0, &lvc);
+
+        lvc.pszText = L"类型名称";
+        lvc.cx = 100;
+        lvc.iSubItem = 1;
+        ListView_InsertColumn(hListView, 1, &lvc);
+
+        lvc.pszText = L"报废年限";
+        lvc.cx = 80;
+        lvc.iSubItem = 2;
+        ListView_InsertColumn(hListView, 2, &lvc);
+
+        Node* temp = rm->category_list->head;
+        size_t count = rm->category_list->size;
+        LVITEM lvItem;
+        for (size_t i = 0; i < count; i++)
+        {
+            temp = temp->next;
+            Category* category = (Category*)temp->data;
+
+            ZeroMemory(&lvItem, sizeof(LVITEM));
+            lvItem.mask = LVIF_TEXT;
+            lvItem.iItem = i;
+            lvItem.iSubItem = 0;
+            wchar_t idBuffer[16];
+            swprintf_s(idBuffer, 16, L"%d", category->id);
+            lvItem.pszText = idBuffer;
+            ListView_InsertItem(hListView, &lvItem);
+
+            ListView_SetItemText(hListView, i, 1, category->name);
+
+            wchar_t Buffer[16];
+            swprintf_s(Buffer, 16, L"%d", category->disposal_years);
+            ListView_SetItemText(hListView, i, 2, Buffer);
+        }
     }
     }
 }
@@ -431,6 +497,7 @@ LRESULT CALLBACK InfoManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
                 _AddLabRoom(hWnd);
                 HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME);
                 SetWindowTextW(hEdit, L"");
+                break;
             }
             case 2:
             {
@@ -441,6 +508,16 @@ LRESULT CALLBACK InfoManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
                 SetWindowTextW(hEdit, L"");
                 hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID);
                 SetWindowTextW(hEdit, L"");
+                break;
+            }
+            case 3:
+            {
+                _AddCategory(hWnd);
+                HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME);
+                SetWindowTextW(hEdit, L"");
+                hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID);
+                SetWindowTextW(hEdit, L"");
+                break;
             }
             }
             break;
@@ -461,6 +538,11 @@ LRESULT CALLBACK InfoManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
             case 2:
             {
                 _DeleteAccount(hWnd);
+                break;
+            }
+            case 3:
+            {
+                _DeleteCategory(hWnd);
                 break;
             }
             }
@@ -494,6 +576,15 @@ LRESULT CALLBACK InfoManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
                 HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME_CHANGE);
                 SetWindowTextW(hEdit, L"");
                 hEdit = GetDlgItem(hWnd, IDC_EDIT_PASSWORD_CHANGE);
+                SetWindowTextW(hEdit, L"");
+                hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
+                SetWindowTextW(hEdit, L"");
+                break;
+            }
+            case 3:
+            {
+                _ChangeCategory(hWnd);
+                HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME_CHANGE);
                 SetWindowTextW(hEdit, L"");
                 hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
                 SetWindowTextW(hEdit, L"");

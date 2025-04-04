@@ -75,9 +75,6 @@
     <ClInclude Include="account.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="category.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="configs.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -124,6 +121,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="function_ui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="category.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

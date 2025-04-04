@@ -4,10 +4,12 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <Windows.h>
 
 #include "configs.h"
 #include "id_manager.h"
 #include "resource_manager.h"
+
 
 typedef struct _Category
 {
@@ -16,11 +18,16 @@ typedef struct _Category
 	int disposal_years;            // ±¨·ÏÄêÏÞ
 }Category;
 
-Category* CreateCategory(char* name, int disposal_years);
+Category* CreateCategory(wchar_t* name, int disposal_years);
 
 void DestoryCategory(Category* category);
 
 void AddCategory();
+
+void _AddCategory(HWND hWnd);
+void _DeleteCategory(HWND hWnd);
+void _ChangeCategory(HWND hWnd);
+
 Category* FindCategoryById(int id);
 
 Category* Id_to_Category(int id);

@@ -217,7 +217,7 @@ bool LoadCategoryList()
 
 bool SaveCategoryList()
 {
-	FILE* fp = _wfopen(L"category.txt", L"w");
+	FILE* fp = _wfopen(L"category.txt", L"wb");
 	if (fp == NULL)
 	{
 		printf("文件打开失败\n");
