@@ -20,7 +20,6 @@ ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* 
     ee->price = price;
     ee->room_id = room_id;
     wcscpy_s(ee->purchase_date, DATE_LENGTH, purchase_date);
-
     return ee;
 
 }

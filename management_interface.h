@@ -19,7 +19,7 @@ void QueryInformation();
 void SortInformation();
 
 // 信息统计
-void Statistics();
+//void Statistics();
 
 // 系统维护
 void SystemMaintenance(AccountType account_type);

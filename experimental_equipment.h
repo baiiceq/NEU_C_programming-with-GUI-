@@ -8,7 +8,7 @@
 #include <Windows.h>
 
 
-enum EquipmentState
+typedef enum _EquipmentState
 {
 	Using,     // 正在使用
 	Idle,      // 空闲
@@ -16,7 +16,7 @@ enum EquipmentState
 	Damaged,   // 损坏（未在维修）
 	Scrapped,  // 报废（准备删除？）
 	Repairing  // 正在维修
-};
+}Equipment;
 
 typedef struct _ExperimentalEquipment
 {
@@ -26,6 +26,7 @@ typedef struct _ExperimentalEquipment
 	int room_id;                              // 所在实验室ID
 	int price;                                // 设备价格
 	wchar_t purchase_date[DATE_LENGTH];          // 购入日期 (YYYY-MM-DD)
+	Equipment state;                          // 设备状态
 }ExperimentalEquipment;
 
 ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* name, int room_id, int price, wchar_t* purchase_date);

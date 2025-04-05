@@ -190,7 +190,15 @@ bool LoadEquipmentList(wchar_t* path)
 		fwscanf_s(fp, L"%d %d ", &eq->id, &category_id);
 		fwscanf_s(fp, L"%ls ", eq->name, EQUIPMENT_LENGTH);
 		fwscanf_s(fp, L"%d %d ", &eq->room_id, &eq->price);
-		fwscanf_s(fp, L"%ls\n", eq->purchase_date, DATE_LENGTH);
+		fwscanf_s(fp, L"%ls ", eq->purchase_date, DATE_LENGTH);
+		wchar_t state[50];
+		fwscanf_s(fp, L"%ls\n", state, 50);
+		if (wcscmp(state, L"Using") == 0) eq->state = Using;
+		else if (wcscmp(state, L"Idle") == 0) eq->state = Idle;
+		else if (wcscmp(state, L"Lost") == 0) eq->state = Lost;
+		else if (wcscmp(state, L"Damaged") == 0) eq->state = Damaged;
+		else if (wcscmp(state, L"Scrapped") == 0) eq->state = Scrapped;
+		else eq->state = Repairing;
 		eq->name[wcslen(eq->name)] = L'\0';
 		eq->purchase_date[wcslen(eq->purchase_date)] = L'\0';
 		eq->category = FindCategoryById(category_id);
@@ -220,9 +228,18 @@ bool SaveEquipmentList(wchar_t* path)
 	while (temp)
 	{
 		ExperimentalEquipment* eq = (ExperimentalEquipment*)temp->data;
-		fwprintf(fp, L"%d %d %ls %d %d %ls\n",
+		fwprintf(fp, L"%d %d %ls %d %d %ls ",
 			eq->id, eq->category->id, eq->name,
 			eq->room_id, eq->price, eq->purchase_date);
+		switch (eq->state)
+		{
+		case Using: fwprintf(fp, L"Using\n"); break;
+		case Idle: fwprintf(fp, L"Idle\n"); break;
+		case Lost: fwprintf(fp, L"Lost\n"); break;
+		case Damaged: fwprintf(fp, L"Damaged\n"); break;
+		case Scrapped: fwprintf(fp, L"Scrapped\n"); break;
+		default: fwprintf(fp, L"Repairing\n"); break;
+		}
 		temp = temp->next;
 	}
 	fclose(fp);

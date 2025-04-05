@@ -5,34 +5,77 @@
 #include "experimental_equipment.h"
 #include "sort.h"
 #include "string.h"
+#include <math.h>
 
+// 统计功能ID定义
 #define ID_BTN_STATISTICS 1010
-#define IDC_RADIO_STATS_EQUIPMENT 1011
-#define IDC_RADIO_STATS_ACCOUNT 1012
-#define IDC_CATEGORY_COMBO 1013
-#define IDC_LABROOM_COMBO 1014
-#define IDC_CHECK_BY_CATEGORY 1015
-#define IDC_CHECK_BY_LABROOM 1016
-#define IDC_CHECK_BY_PRICE 1017
-#define IDC_CHECK_BY_DATE 1018
-#define IDC_CHECK_BY_ACCOUNT_TYPE 1019
-#define IDC_CHECK_BY_ACCOUNT_LABROOM 1020
-#define IDC_EDIT_MIN_PRICE 1021
-#define IDC_EDIT_MAX_PRICE 1022
-#define IDC_EDIT_START_DATE 1023
-#define IDC_EDIT_END_DATE 1024
-#define IDC_ACCOUNT_TYPE_COMBO 1025
-#define IDC_ACCOUNT_LABROOM_COMBO 1026
-#define IDC_BTN_STATS_EXECUTE 1027
-#define IDC_BTN_STATS_BACK 1028
-#define IDC_STATS_RESULT_LIST 1029
+
+// 统计主界面控件ID
+#define IDC_BTN_PRESET_STATS 1110
+#define IDC_BTN_EQUIPMENT_STATS 1111
+#define IDC_BTN_ACCOUNT_STATS 1112
+#define IDC_BTN_STATS_BACK 1113
+
+// 设备统计控件ID
+#define IDC_CHECK_BY_CATEGORY 1115
+#define IDC_CHECK_BY_LABROOM 1116
+#define IDC_CHECK_BY_PRICE 1117
+#define IDC_CHECK_BY_DATE 1118
+#define IDC_CATEGORY_COMBO 1119
+#define IDC_LABROOM_COMBO 1120
+#define IDC_EDIT_MIN_PRICE 1121
+#define IDC_EDIT_MAX_PRICE 1122
+#define IDC_EDIT_START_DATE 1123
+#define IDC_EDIT_END_DATE 1124
+#define IDC_BTN_EQUIPMENT_STATS_EXECUTE 1125
+#define IDC_BTN_EQUIPMENT_STATS_BACK 1126
+#define IDC_EQUIPMENT_STATS_RESULT_LIST 1127
+
+// 账户统计控件ID
+#define IDC_CHECK_BY_ACCOUNT_TYPE 1130
+#define IDC_CHECK_BY_ACCOUNT_LABROOM 1131
+#define IDC_ACCOUNT_TYPE_COMBO 1132
+#define IDC_ACCOUNT_LABROOM_COMBO 1133
+#define IDC_BTN_ACCOUNT_STATS_EXECUTE 1134
+#define IDC_BTN_ACCOUNT_STATS_BACK 1135
+#define IDC_ACCOUNT_STATS_RESULT_LIST 1136
+
+// 全局窗口句柄
+static HWND hwndStatisticsMain = NULL;          // 统计主界面
+static HWND hwndPresetStats = NULL;             // 预设统计窗口
+static HWND hwndEquipmentStats = NULL;          // 设备统计窗口
+static HWND hwndAccountStats = NULL;            // 账户统计窗口
+
+// 设备统计窗口控件句柄
+static HWND hCheckByCategory = NULL;
+static HWND hCategoryCombo = NULL;
+static HWND hCheckByLabroom = NULL;
+static HWND hLabroomCombo = NULL;
+static HWND hCheckByPrice = NULL;
+static HWND hEditMinPrice = NULL;
+static HWND hEditMaxPrice = NULL;
+static HWND hCheckByDate = NULL;
+static HWND hEditStartDate = NULL;
+static HWND hEditEndDate = NULL;
+static HWND hEquipmentResultList = NULL;
+
+// 账户统计窗口控件句柄
+static HWND hCheckByAccountType = NULL;
+static HWND hAccountTypeCombo = NULL;
+static HWND hCheckByAccountLabroom = NULL;
+static HWND hAccountLabroomCombo = NULL;
+static HWND hAccountResultList = NULL;
+
+// 外部引用的全局变量
+extern HWND hwndSystemMaintenance;
+extern EquipmentManagement* em;
 
 typedef struct _EquipmentsCount
 {
     int categoryId;
-    int countByCategory; 
+    int countByCategory;
     int room_id;
-    int countByRoom;     
+    int countByRoom;
     int countByDate;
     int countByPrice;
     int min_price;
@@ -42,21 +85,70 @@ typedef struct _EquipmentsCount
     int count;
 } EquipmentsCount;
 
+typedef struct _AccountCount
+{
+    AccountType type;
+    int countByType;
+    int room_id;
+    int countByRoom;
+    int count;
+} AccountCount;
 
-void CountEquipment(LinkedList* list, EquipmentsCount* Count) 
+// 填充设备类别下拉框
+void FillCategoryComboBox(HWND hComboBox)
+{
+    ResourceManager* rm = GetResourceManage();
+    if (!rm || !rm->category_list) return;
+
+    Node* temp = rm->category_list->head->next;
+    while (temp)
+    {
+        Category* category = (Category*)temp->data;
+        if (category)
+        {
+            SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)category->name);
+        }
+        temp = temp->next;
+    }
+    SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+}
+
+// 填充实验室下拉框
+void FillLabroomComboBox(HWND hComboBox)
+{
+    ResourceManager* rm = GetResourceManage();
+    if (!rm || !rm->laboratory_list) return;
+
+    Node* temp = rm->laboratory_list->head->next;
+    while (temp)
+    {
+        LabRoom* labroom = (LabRoom*)temp->data;
+        if (labroom)
+        {
+            wchar_t buffer[100];
+            swprintf(buffer, 100, L"%d - %s", labroom->id, labroom->name);
+            SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
+        }
+        temp = temp->next;
+    }
+    SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+}
+
+// 设备统计功能
+void CountEquipment(LinkedList* list, EquipmentsCount* Count)
 {
     if (!list || !Count) return;
 
     Node* node = list->head->next;
-    while (node) 
+    while (node)
     {
         ExperimentalEquipment* ee = (ExperimentalEquipment*)node->data;
 
-        bool is_category_conform = Count->countByCategory < 0 || 
+        bool is_category_conform = Count->countByCategory < 0 ||
             (Count->countByCategory >= 0 && Count->categoryId == ee->category->id);
-        bool is_roomid_conform = Count->countByRoom < 0 || 
+        bool is_roomid_conform = Count->countByRoom < 0 ||
             (Count->countByRoom >= 0 && Count->room_id == ee->room_id);
-        bool is_date_conform = Count->countByDate < 0 || 
+        bool is_date_conform = Count->countByDate < 0 ||
             (strcmp(ee->purchase_date, Count->startDate) >= 0 && strcmp(ee->purchase_date, Count->endDate) <= 0);
         bool is_price_conform = Count->countByPrice < 0 ||
             (ee->price >= Count->min_price && ee->price <= Count->max_price);
@@ -69,149 +161,161 @@ void CountEquipment(LinkedList* list, EquipmentsCount* Count)
     }
 }
 
-static void PrintEquipment2(EquipmentsCount* Count)
+// 执行设备统计
+void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView)
 {
-    ResourceManager* rm = GetResourceManage();
+    EquipmentsCount count;
+    memset(&count, 0, sizeof(EquipmentsCount));
 
-    printf("--- 设备统计结果 ---\n");
-    if (Count->countByRoom >= 0)
-    {
-        LabRoom* labroom = RoomId_to_LabRoom(Count->room_id);
-        printf("--- 实验室%s 中:\n", labroom->name);
-    }
-
-    if (Count->countByDate >= 0)
-    {
-        printf("在日期%s到%s之间\n", Count->startDate, Count->endDate);
-    }
-
-    if (Count->countByPrice >= 0)
-    {
-        printf("在价格%d元到%d元之间\n", Count->min_price, Count->max_price);
-    }
-
-    if (Count->countByCategory >= 0)
-    {
-        Category* category = Id_to_Category(Count->categoryId);
-
-        printf("类型为%s\n", category->name);
-    }
-
-    printf("共有%d件\n",Count->count);
-    system("pause");
-        
-}
-
-void StatisticsEquipmentMenu()
-{
-    EquipmentsCount Count;
-    Count.countByCategory = -1;
-    Count.countByDate = -1;
-    Count.countByPrice = -1;
-    Count.countByRoom = -1;
-    Count.count = 0;
+    count.countByCategory = -1;
+    count.countByRoom = -1;
+    count.countByPrice = -1;
+    count.countByDate = -1;
+    count.count = 0;
 
     ResourceManager* rm = GetResourceManage();
-
-    system("cls");
-
-    printf("---        设备统计设置        ---\n\n");
-
-    while (getchar() != '\n');
+    if (!rm) return;
 
     // 按设备类型统计
-    printf("--- 是否按照设备类型统计（1 确定，回车跳过）-> ");
-    char input[10];
-    fgets(input, sizeof(input), stdin);
-    if (input[0] == '1') 
+    if (SendMessage(hCheckByCategory, BM_GETCHECK, 0, 0) == BST_CHECKED)
     {
-        printf("--- 当前统计类型有\n");
-        size_t category_count = rm->category_list->size;
+        count.countByCategory = 1;
 
-        printf("---      选择你要统计的类型        ---\n\n");
-
-        Node* temp = rm->category_list->head->next;
-        for (size_t i = 0; i < category_count; i++)
+        //获取设备类别id
+        int selectedIndex = SendMessage(hCategoryCombo, CB_GETCURSEL, 0, 0);
+        if (selectedIndex != CB_ERR)
         {
-            Category* category = (Category*)temp->data;
-            printf("--- No%d. %s\n", (int)i + 1, category->name);
-            temp = temp->next;
-        }
-
-        printf("--- 输入想要统计的设备类型编号: ");
-        fgets(input, sizeof(input), stdin);
-        int categoryIndex = atoi(input);
-        if (categoryIndex > 0 && categoryIndex <= (int)category_count) 
-        {
-            Count.countByCategory = 1;
-            Count.categoryId = categoryIndex;
+            Node* temp = rm->category_list->head->next;
+            for (int i = 0; i < selectedIndex && temp; i++)
+            {
+                temp = temp->next;
+            }
+            if (temp)
+            {
+                Category* category = (Category*)temp->data;
+                count.categoryId = category->id;
+            }
         }
     }
 
     // 按实验室统计
-    printf("--- 是否按照设备所属实验室统计（1 确定，回车跳过）-> ");
-    fgets(input, sizeof(input), stdin);
-    if (input[0] == '1') 
+    if (SendMessage(hCheckByLabroom, BM_GETCHECK, 0, 0) == BST_CHECKED)
     {
-        printf("--- 请输入实验室ID: ");
-        fgets(input, sizeof(input), stdin);
-        Count.room_id = atoi(input);
+        count.countByRoom = 1;
 
-        LabRoom* labroom = RoomId_to_LabRoom(Count.room_id);
-        if (labroom == NULL)
+
+        int selectedIndex = SendMessage(hLabroomCombo, CB_GETCURSEL, 0, 0);
+        if (selectedIndex != CB_ERR)
         {
-            printf("该实验室不存在\n");
-            system("pause");
-            return;
+            wchar_t buffer[100];
+            SendMessage(hLabroomCombo, CB_GETLBTEXT, selectedIndex, (LPARAM)buffer);
+            count.room_id = _wtoi(buffer);
         }
-        Count.countByRoom = 1;
     }
 
     // 按价格统计
-    printf("--- 是否按照设备价格统计（1 确定，回车跳过）-> ");
-    fgets(input, sizeof(input), stdin);
-    if (input[0] == '1') 
+    if (SendMessage(hCheckByPrice, BM_GETCHECK, 0, 0) == BST_CHECKED)
     {
-        printf("--- 请输入最低价格: ");
-        fgets(input, sizeof(input), stdin);
-        Count.min_price = atof(input);
-
-        printf("--- 请输入最高价格: ");
-        fgets(input, sizeof(input), stdin);
-        Count.max_price = atof(input);
-
-        Count.countByPrice = 1;
+        count.countByPrice = 1;
+        wchar_t minPrice[32], maxPrice[32];
+        GetWindowText(hEditMinPrice, minPrice, 32);
+        GetWindowText(hEditMaxPrice, maxPrice, 32);
+        count.min_price = _wtoi(minPrice);
+        count.max_price = _wtoi(maxPrice);
     }
 
-    printf("--- 是否按照设备日期统计（1 确定，回车跳过）-> ");
-    fgets(input, sizeof(input), stdin);
-    if (input[0] == '1') 
+    // 按日期统计
+    if (SendMessage(hCheckByDate, BM_GETCHECK, 0, 0) == BST_CHECKED)
     {
-        printf("--- 请输入最早时间（YYYYMMDD）: ");
-        fgets(Count.startDate, sizeof(Count.startDate), stdin);
-        Count.startDate[strcspn(Count.startDate, "\n")] = '\0';  
-
-        printf("--- 请输入最晚时间（YYYYMMDD）: ");
-        fgets(Count.endDate, sizeof(Count.endDate), stdin);
-        Count.endDate[strcspn(Count.endDate, "\n")] = '\0';
-
-        Count.countByDate = 1;
+        count.countByDate = 1;
+        GetWindowText(hEditStartDate, count.startDate, DATE_LENGTH);
+        GetWindowText(hEditEndDate, count.endDate, DATE_LENGTH);
     }
 
-    CountEquipment(rm->equipment_list, &Count);
+    // 执行统计
+    CountEquipment(rm->equipment_list, &count);
 
-    PrintEquipment2(&Count);
+    // 按行显示统计结果
+    int itemIndex = 0;
+
+    // 添加统计条件
+    LVITEM lvi;
+    wchar_t buffer[256];
+
+    if (count.countByCategory >= 0)
+    {
+        Category* category = FindCategoryById(count.categoryId);
+        if (category)
+        {
+            lvi.mask = LVIF_TEXT;
+            lvi.iItem = itemIndex;
+            lvi.iSubItem = 0;
+            lvi.pszText = L"设备类型";
+            ListView_InsertItem(hListView, &lvi);
+
+            ListView_SetItemText(hListView, itemIndex, 1, category->name);
+            itemIndex++;
+        }
+    }
+
+    if (count.countByRoom >= 0)
+    {
+        LabRoom* labroom = RoomId_to_LabRoom(count.room_id);
+        if (labroom)
+        {
+            lvi.mask = LVIF_TEXT;
+            lvi.iItem = itemIndex;
+            lvi.iSubItem = 0;
+            lvi.pszText = L"所属实验室";
+            ListView_InsertItem(hListView, &lvi);
+
+            ListView_SetItemText(hListView, itemIndex, 1, labroom->name);
+            itemIndex++;
+        }
+    }
+
+    if (count.countByPrice >= 0)
+    {
+        lvi.mask = LVIF_TEXT;
+        lvi.iItem = itemIndex;
+        lvi.iSubItem = 0;
+        lvi.pszText = L"价格范围";
+        ListView_InsertItem(hListView, &lvi);
+
+        swprintf(buffer, 256, L"%d 元 - %d 元", count.min_price, count.max_price);
+        ListView_SetItemText(hListView, itemIndex, 1, buffer);
+        itemIndex++;
+    }
+
+    if (count.countByDate >= 0)
+    {
+        lvi.mask = LVIF_TEXT;
+        lvi.iItem = itemIndex;
+        lvi.iSubItem = 0;
+        lvi.pszText = L"日期范围";
+        ListView_InsertItem(hListView, &lvi);
+
+        wchar_t startDate[DATE_LENGTH], endDate[DATE_LENGTH];
+        mbstowcs_s(NULL, startDate, DATE_LENGTH, count.startDate, _TRUNCATE);
+        mbstowcs_s(NULL, endDate, DATE_LENGTH, count.endDate, _TRUNCATE);
+
+        swprintf(buffer, 256, L"%s - %s", startDate, endDate);
+        ListView_SetItemText(hListView, itemIndex, 1, buffer);
+        itemIndex++;
+    }
+
+    // 添加统计结果
+    lvi.mask = LVIF_TEXT;
+    lvi.iItem = itemIndex;
+    lvi.iSubItem = 0;
+    lvi.pszText = L"统计结果";
+    ListView_InsertItem(hListView, &lvi);
+
+    swprintf(buffer, 256, L"共有 %d 件设备", count.count);
+    ListView_SetItemText(hListView, itemIndex, 1, buffer);
 }
 
-typedef struct _AccountCount
-{
-    AccountType type;
-    int countByType;
-    int room_id;
-    int countByRoom;
-    int count;
-} AccountCount;
-
+// 账户统计功能
 void CountAccount(LinkedList* list, AccountCount* Count)
 {
     if (!list || !Count) return;
@@ -234,696 +338,785 @@ void CountAccount(LinkedList* list, AccountCount* Count)
     }
 }
 
-static void PrintAccount2(AccountCount* Count)
+// 执行账户统计
+void ExecuteAccountStatistics(HWND hWnd, HWND hListView)
 {
-    ResourceManager* rm = GetResourceManage();
+    AccountCount count;
+    memset(&count, 0, sizeof(AccountCount));
 
-    printf("--- 设备统计结果 ---\n");
-    if (Count->countByRoom >= 0)
-    {
-        LabRoom* labroom = RoomId_to_LabRoom(Count->room_id);
-        printf("--- 实验室%s 中:\n", labroom->name);
-    }
-
-    if (Count->countByType >= 0)
-    {
-        char type[10] = "";
-        switch (Count->type)
-        {
-        case Admin:
-            strcpy_s(type, 10, "管理员");
-            break;
-        case Experimenter:
-            strcpy_s(type, 10, "实验员");
-            break;
-        case User:
-            strcpy_s(type, 10, "一般用户");
-            break;
-        }
-        printf("--- 账户类型为%s :\n", type);
-    }
-
-    printf("共有%d个\n", Count->count);
-    system("pause");
-
-}
-
-void StatisticsAccountMenu()
-{
-    AccountCount Count;
-    Count.countByType = -1;
-    Count.type = Unknow;
-    Count.countByRoom = -1;
-    Count.count = 0;
+    count.countByType = -1;
+    count.countByRoom = -1;
+    count.count = 0;
 
     ResourceManager* rm = GetResourceManage();
-
-    system("cls");
-
-    printf("---        设备统计设置        ---\n\n");
-
-    while (getchar() != '\n');
+    if (!rm) return;
 
     // 按账户类型统计
-    printf("--- 是否按照账户类型统计（1 确定，回车跳过）-> ");
-    char input[10];
-    fgets(input, sizeof(input), stdin);
-    if (input[0] == '1')
+    if (SendMessage(hCheckByAccountType, BM_GETCHECK, 0, 0) == BST_CHECKED)
     {
-        printf("--- 账户类型有\n");
-
-        printf("---      选择你要统计的类型        ---\n\n");
-
-        printf("--- No1. 管理员\n");
-        printf("--- No2. 实验员\n");
-        printf("--- No3. 一般用户\n");
-
-        printf("--- 输入想要统计的账户类型: ");
-        fgets(input, sizeof(input), stdin);
-        int accountIndex = atoi(input);
-        if (accountIndex > 0 && accountIndex <= 3)
+        count.countByType = 1;
+        int selectedIndex = SendMessage(hAccountTypeCombo, CB_GETCURSEL, 0, 0);
+        if (selectedIndex != CB_ERR)
         {
-            Count.countByType = 1;
-            Count.type = (AccountType)(accountIndex - 1);
-        }
-
-        if (Count.type == Experimenter)
-        {
-            printf("--- 是否按照实验员实验室统计（1 确定，回车跳过）-> ");
-            fgets(input, sizeof(input), stdin);
-            if (input[0] == '1')
+            // 根据下拉框选择设置账户类型
+            switch (selectedIndex)
             {
-                printf("--- 请输入实验室ID: ");
-                fgets(input, sizeof(input), stdin);
-                Count.room_id = atoi(input);
-
-                LabRoom* labroom = RoomId_to_LabRoom(Count.room_id);
-                if (labroom == NULL)
-                {
-                    printf("该实验室不存在\n");
-                    system("pause");
-                    return;
-                }
-                Count.countByRoom = 1;
+            case 0: count.type = Admin; break;
+            case 1: count.type = Experimenter; break;
+            case 2: count.type = User; break;
+            default: count.type = Unknow; break;
             }
         }
     }
 
-    CountAccount(rm->equipment_list, &Count);
+    // 按实验室统计
+    if (SendMessage(hCheckByAccountLabroom, BM_GETCHECK, 0, 0) == BST_CHECKED)
+    {
+        count.countByRoom = 1;
+        int selectedIndex = SendMessage(hAccountLabroomCombo, CB_GETCURSEL, 0, 0);
+        if (selectedIndex != CB_ERR)
+        {
+            wchar_t buffer[100];
+            SendMessage(hAccountLabroomCombo, CB_GETLBTEXT, selectedIndex, (LPARAM)buffer);
+            count.room_id = _wtoi(buffer);
+        }
+    }
 
-    PrintAccount2(&Count);
+    // 执行统计
+    CountAccount(rm->account_list, &count);
+
+    // 显示统计结果
+    int itemIndex = 0;
+
+    // 添加统计条件
+    LVITEM lvi;
+    wchar_t buffer[256];
+
+    if (count.countByType >= 0)
+    {
+        lvi.mask = LVIF_TEXT;
+        lvi.iItem = itemIndex;
+        lvi.iSubItem = 0;
+        lvi.pszText = L"账户类型";
+        ListView_InsertItem(hListView, &lvi);
+
+        const wchar_t* typeStr = L"";
+        switch (count.type)
+        {
+        case Admin: typeStr = L"管理员"; break;
+        case Experimenter: typeStr = L"实验员"; break;
+        case User: typeStr = L"一般用户"; break;
+        default: typeStr = L"未知"; break;
+        }
+        ListView_SetItemText(hListView, itemIndex, 1, (LPWSTR)typeStr);
+        itemIndex++;
+    }
+
+    if (count.countByRoom >= 0)
+    {
+        LabRoom* labroom = RoomId_to_LabRoom(count.room_id);
+        if (labroom)
+        {
+            lvi.mask = LVIF_TEXT;
+            lvi.iItem = itemIndex;
+            lvi.iSubItem = 0;
+            lvi.pszText = L"所属实验室";
+            ListView_InsertItem(hListView, &lvi);
+
+            ListView_SetItemText(hListView, itemIndex, 1, labroom->name);
+            itemIndex++;
+        }
+    }
+
+    // 添加统计结果
+    lvi.mask = LVIF_TEXT;
+    lvi.iItem = itemIndex;
+    lvi.iSubItem = 0;
+    lvi.pszText = L"统计结果";
+    ListView_InsertItem(hListView, &lvi);
+
+    swprintf(buffer, 256, L"共有 %d 个账户", count.count);
+    ListView_SetItemText(hListView, itemIndex, 1, buffer);
 }
 
-extern HWND hwndSystemMaintenance;
-extern EquipmentManagement* em;
+// 扇形图相关的控件ID
+#define IDC_PIE_CHART_AREA 1501
+#define IDC_BTN_SWITCH_CHART 1502
 
-HWND hwndStatistics = NULL;
-HWND hwndEquipmentGroup = NULL;
-HWND hwndAccountGroup = NULL;
+// 扇形图数据结构
+typedef struct _PieChartItem {
+    wchar_t label[50];         //小饼的标签
+	int value;                 //小饼的值
+	COLORREF color;            //小饼的颜色
+} PieChartItem;
 
+#define MAX_PIE_ITEMS 30  // 扇形图最大项数
 
-// 填充设备类别下拉框
-void FillCategoryComboBox(HWND hComboBox)
+// 扇形图完整数据
+typedef struct _PieChartData {
+    wchar_t title[100];                //扇形图标题
+    PieChartItem items[MAX_PIE_ITEMS]; //扇形图的小饼
+	int itemCount;                     //小饼数
+    int total;                         //统计量总数
+} PieChartData;
+
+// 全局变量
+static PieChartData labRoomPieData;
+static PieChartData categoryPieData;
+static BOOL showLabRoomChart = TRUE;  // TRUE显示实验室统计图，FALSE显示类别统计图
+static HWND hSwitchButton = NULL;     // 切换按钮句柄
+
+// 初始化扇形图数据
+void InitPieChartData(PieChartData* data, const wchar_t* title) 
 {
-	ResourceManager* rm = GetResourceManage();
-	if (!rm || !rm->category_list) return;
-
-	Node* temp = rm->category_list->head->next;
-	while (temp)
-	{
-		Category* category = (Category*)temp->data;
-		if (category)
-		{
-			SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)category->name);
-		}
-		temp = temp->next;
-	}
-	SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+    wcscpy_s(data->title, 100, title);
+    data->itemCount = 0;
+    data->total = 0;
 }
 
-// 填充实验室下拉框
-void FillLabroomComboBox(HWND hComboBox)
+// 添加小饼
+void AddPieChartItem(PieChartData* data, const wchar_t* label, int value, COLORREF color)
 {
-	ResourceManager* rm = GetResourceManage();
-	if (!rm || !rm->laboratory_list) return;
+    if (data->itemCount >= MAX_PIE_ITEMS) return;
 
-	Node* temp = rm->laboratory_list->head->next;
-	while (temp)
-	{
-		LabRoom* labroom = (LabRoom*)temp->data;
-		if (labroom)
-		{
-			wchar_t buffer[100];
-			swprintf(buffer, 100, L"%d - %s", labroom->id, labroom->name);
-			SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
-		}
-		temp = temp->next;
-	}
-	SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+    wcscpy_s(data->items[data->itemCount].label, 50, label);
+    data->items[data->itemCount].value = value;
+    data->items[data->itemCount].color = color;
+    data->itemCount++;
+    data->total += value;
 }
 
-// 执行设备统计
-void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView, HWND hCheckByCategory, HWND hCategoryCombo,
-	HWND hCheckByLabroom, HWND hLabroomCombo, HWND hCheckByPrice,
-	HWND hEditMinPrice, HWND hEditMaxPrice, HWND hCheckByDate,
-	HWND hEditStartDate, HWND hEditEndDate)
+// 收集实验室设备数据
+void CollectLabRoomEquipmentStats() 
 {
-	EquipmentsCount count;
-	memset(&count, 0, sizeof(EquipmentsCount));
+    ResourceManager* rm = GetResourceManage();
+    if (!rm || !rm->laboratory_list || !rm->equipment_list) return;
 
-	count.countByCategory = -1;
-	count.countByRoom = -1;
-	count.countByPrice = -1;
-	count.countByDate = -1;
-	count.count = 0;
-
-	ResourceManager* rm = GetResourceManage();
-	if (!rm) return;
-
-	// 按设备类型统计
-	if (SendMessage(hCheckByCategory, BM_GETCHECK, 0, 0) == BST_CHECKED)
-	{
-		count.countByCategory = 1;
-		int selectedIndex = SendMessage(hCategoryCombo, CB_GETCURSEL, 0, 0);
-		if (selectedIndex != CB_ERR)
-		{
-			Node* temp = rm->category_list->head->next;
-			for (int i = 0; i < selectedIndex && temp; i++)
-			{
-				temp = temp->next;
-			}
-			if (temp)
-			{
-				Category* category = (Category*)temp->data;
-				count.categoryId = category->id;
-			}
-		}
-	}
-
-	// 按实验室统计
-	if (SendMessage(hCheckByLabroom, BM_GETCHECK, 0, 0) == BST_CHECKED)
-	{
-		count.countByRoom = 1;
-		int selectedIndex = SendMessage(hLabroomCombo, CB_GETCURSEL, 0, 0);
-		if (selectedIndex != CB_ERR)
-		{
-			wchar_t buffer[100];
-			SendMessage(hLabroomCombo, CB_GETLBTEXT, selectedIndex, (LPARAM)buffer);
-			// 解析出实验室ID
-			count.room_id = _wtoi(buffer);
-		}
-	}
-
-	// 按价格统计
-	if (SendMessage(hCheckByPrice, BM_GETCHECK, 0, 0) == BST_CHECKED)
-	{
-		count.countByPrice = 1;
-		wchar_t minPrice[32], maxPrice[32];
-		GetWindowText(hEditMinPrice, minPrice, 32);
-		GetWindowText(hEditMaxPrice, maxPrice, 32);
-		count.min_price = _wtoi(minPrice);
-		count.max_price = _wtoi(maxPrice);
-	}
-
-	// 按日期统计
-	if (SendMessage(hCheckByDate, BM_GETCHECK, 0, 0) == BST_CHECKED)
-	{
-		count.countByDate = 1;
-		wchar_t startDate[DATE_LENGTH], endDate[DATE_LENGTH];
-		GetWindowText(hEditStartDate, startDate, DATE_LENGTH);
-		GetWindowText(hEditEndDate, endDate, DATE_LENGTH);
-
-		// 转换日期字符串
-		char mbStartDate[DATE_LENGTH], mbEndDate[DATE_LENGTH];
-		wcstombs_s(NULL, mbStartDate, DATE_LENGTH, startDate, _TRUNCATE);
-		wcstombs_s(NULL, mbEndDate, DATE_LENGTH, endDate, _TRUNCATE);
-
-		strcpy_s(count.startDate, DATE_LENGTH, mbStartDate);
-		strcpy_s(count.endDate, DATE_LENGTH, mbEndDate);
-	}
-
-	// 执行统计
-	CountEquipment(rm->equipment_list, &count);
-
-	// 显示统计结果
-	int itemIndex = 0;
-
-	// 添加统计条件
-	LVITEM lvi;
-	wchar_t buffer[256];
-
-	if (count.countByCategory >= 0)
-	{
-		Category* category = FindCategoryById(count.categoryId);
-		if (category)
-		{
-			lvi.mask = LVIF_TEXT;
-			lvi.iItem = itemIndex;
-			lvi.iSubItem = 0;
-			lvi.pszText = L"设备类型";
-			ListView_InsertItem(hListView, &lvi);
-
-			ListView_SetItemText(hListView, itemIndex, 1, category->name);
-			itemIndex++;
-		}
-	}
-
-	if (count.countByRoom >= 0)
-	{
-		LabRoom* labroom = RoomId_to_LabRoom(count.room_id);
-		if (labroom)
-		{
-			lvi.mask = LVIF_TEXT;
-			lvi.iItem = itemIndex;
-			lvi.iSubItem = 0;
-			lvi.pszText = L"所属实验室";
-			ListView_InsertItem(hListView, &lvi);
-
-			ListView_SetItemText(hListView, itemIndex, 1, labroom->name);
-			itemIndex++;
-		}
-	}
-
-	if (count.countByPrice >= 0)
-	{
-		lvi.mask = LVIF_TEXT;
-		lvi.iItem = itemIndex;
-		lvi.iSubItem = 0;
-		lvi.pszText = L"价格范围";
-		ListView_InsertItem(hListView, &lvi);
-
-		swprintf(buffer, 256, L"%d 元 - %d 元", count.min_price, count.max_price);
-		ListView_SetItemText(hListView, itemIndex, 1, buffer);
-		itemIndex++;
-	}
-
-	if (count.countByDate >= 0)
-	{
-		lvi.mask = LVIF_TEXT;
-		lvi.iItem = itemIndex;
-		lvi.iSubItem = 0;
-		lvi.pszText = L"日期范围";
-		ListView_InsertItem(hListView, &lvi);
-
-		wchar_t startDate[DATE_LENGTH], endDate[DATE_LENGTH];
-		mbstowcs_s(NULL, startDate, DATE_LENGTH, count.startDate, _TRUNCATE);
-		mbstowcs_s(NULL, endDate, DATE_LENGTH, count.endDate, _TRUNCATE);
-
-		swprintf(buffer, 256, L"%s - %s", startDate, endDate);
-		ListView_SetItemText(hListView, itemIndex, 1, buffer);
-		itemIndex++;
-	}
-
-	// 添加统计结果
-	lvi.mask = LVIF_TEXT;
-	lvi.iItem = itemIndex;
-	lvi.iSubItem = 0;
-	lvi.pszText = L"统计结果";
-	ListView_InsertItem(hListView, &lvi);
-
-	swprintf(buffer, 256, L"共有 %d 件设备", count.count);
-	ListView_SetItemText(hListView, itemIndex, 1, buffer);
+    InitPieChartData(&labRoomPieData, L"各实验室设备数量统计");
+    // 添加数据到扇形图
+    Node* temp = rm->laboratory_list->head->next;
+    for (int i = 0; temp; i++,temp=temp->next)
+    {
+        EquipmentsCount a;
+		a.countByRoom = 1;
+		LabRoom* labRoom = (LabRoom*)temp->data;
+		a.room_id = labRoom->id;
+		a.countByCategory = -1;
+		a.countByDate = -1;
+		a.countByPrice = -1;
+		a.count = 0;
+		CountEquipment(rm->equipment_list, &a);
+        if (a.count> 0) 
+        {
+            // 生成颜色 - 使用不同的RGB值
+            COLORREF color = RGB(
+                50 + (i * 67) % 200,
+                50 + ((i + 3) * 111) % 200,
+                50 + ((i + 7) * 157) % 200
+            );
+            AddPieChartItem(&labRoomPieData, labRoom->name, a.count, color);
+        }
+    }
 }
 
-// 执行账户统计
-void ExecuteAccountStatistics(HWND hWnd, HWND hListView, HWND hCheckByAccountType,
-	HWND hAccountTypeCombo, HWND hCheckByAccountLabroom,
-	HWND hAccountLabroomCombo)
+// 收集设备类别数量统计数据
+void CollectCategoryEquipmentStats() {
+    ResourceManager* rm = GetResourceManage();
+    if (!rm || !rm->category_list || !rm->equipment_list) return;
+
+    InitPieChartData(&categoryPieData, L"各设备类别数量统计");
+    // 添加数据到扇形图
+	Node* category = rm->category_list->head->next;
+    for (int i = 0; category; i++,category=category->next)
+    {
+		Category* cat = (Category*)category->data;
+        EquipmentsCount a;
+		a.countByCategory = 1;
+		a.categoryId = cat->id;
+		a.countByRoom = -1;
+		a.countByDate = -1;
+		a.countByPrice = -1;
+		a.count = 0;
+		CountEquipment(rm->equipment_list, &a);
+        if (a.count > 0) {
+            // 生成颜色 - 使用不同的RGB值
+            COLORREF color = RGB(
+                50 + (i * 61) % 200,
+                50 + ((i + 5) * 101) % 200,
+                50 + ((i + 9) * 173) % 200
+            );
+            AddPieChartItem(&categoryPieData, cat->name, a.count, color);
+        }
+    }
+}
+
+// 绘制扇形图
+void DrawPieChart(HDC hdc, RECT rect, const PieChartData* pieData) {
+    if (pieData->itemCount == 0 || pieData->total == 0) {
+        SetTextColor(hdc, RGB(0, 0, 0));
+        SetBkMode(hdc, TRANSPARENT);
+        DrawText(hdc, L"没有统计数据", -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        return;
+    }
+
+    int centerX = (rect.left + rect.right) / 2;
+    int centerY = (rect.top + rect.bottom) / 2;
+    // 留出空间给图例和标题
+    int radius = min((rect.right - rect.left) / 2, (rect.bottom - rect.top) / 2) - 70; 
+
+    // 空间不够
+    if (radius < 10) return; 
+
+    // 标题
+    RECT titleRect = { rect.left, rect.top, rect.right, rect.top + 30 };
+    SetTextColor(hdc, RGB(0, 0, 0));
+    SetBkMode(hdc, TRANSPARENT);
+    DrawText(hdc, pieData->title, -1, &titleRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+    // 绘制扇形
+    int startAngle = 0;
+    int endAngle;
+
+    for (int i = 0; i < pieData->itemCount; i++) {
+        if (pieData->items[i].value == 0) continue; 
+
+        endAngle = startAngle + (pieData->items[i].value * 360) / pieData->total;
+
+        HBRUSH hBrush = CreateSolidBrush(pieData->items[i].color);
+        HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+
+        int x1 = centerX - (int)(radius * sin(startAngle * 3.14159 / 180));
+        int x2 = centerY - (int)(radius * cos(startAngle * 3.14159 / 180));
+		int x3 = centerX - (int)(radius * sin(endAngle * 3.14159 / 180));
+		int x4 = centerY - (int)(radius * cos(endAngle * 3.14159 / 180));
+        // 绘制扇形
+        Pie(hdc,
+            centerX - radius, centerY - radius,
+            centerX + radius, centerY + radius,
+            x1, x2, x3, x4);
+
+        SelectObject(hdc, hOldBrush);
+        DeleteObject(hBrush);
+
+        startAngle = endAngle;
+    }
+    {
+    // 绘制图例
+    int legendX = rect.left + 50;
+    int legendY = centerY + radius + 20;
+    int legendBoxSize = 15;
+    int legendSpacing = 25;
+    int legendsPerRow = 2;  // 每行显示的图例数
+    int currentLegendInRow = 0;
+    int originalLegendX = legendX;
+
+    for (int i = 0; i < pieData->itemCount; i++) {
+        if (pieData->items[i].value == 0) continue; // 跳过无数据的项
+
+        HBRUSH hBrush = CreateSolidBrush(pieData->items[i].color);
+        HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+
+        // 绘制图例色块
+        Rectangle(hdc,
+            legendX, legendY,
+            legendX + legendBoxSize, legendY + legendBoxSize);
+
+        SelectObject(hdc, hOldBrush);
+        DeleteObject(hBrush);
+
+        // 绘制图例文本
+        wchar_t legendText[100];
+        swprintf(legendText, 100, L"%s: %d (%.1f%%)",
+            pieData->items[i].label,
+            pieData->items[i].value,
+            (float)pieData->items[i].value * 100.0f / pieData->total);
+
+        RECT legendTextRect = {
+            legendX + legendBoxSize + 5,
+            legendY,
+            legendX + legendBoxSize + 255,
+            legendY + legendBoxSize
+        };
+
+        DrawText(hdc, legendText, -1, &legendTextRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+        // 更新图例位置
+        currentLegendInRow++;
+        if (currentLegendInRow >= legendsPerRow) {
+            currentLegendInRow = 0;
+            legendX = originalLegendX;
+            legendY += legendSpacing;
+        }
+        else {
+            legendX += 300;  // 下一列的水平偏移
+        }
+    }
+    }
+}
+
+// 刷新绘图区
+void RefreshPresetStatsWindow(HWND hWnd) {
+    RECT clientRect;
+    GetClientRect(hWnd, &clientRect);
+    InvalidateRect(hWnd, &clientRect, TRUE);
+}
+
+// 预设统计窗口过程
+LRESULT CALLBACK PresetStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    static HFONT hFont = NULL;
+
+    switch (msg) {
+    case WM_CREATE:
+    {
+        // 创建标题
+        CreateWindow(L"STATIC", L"预设统计", WS_VISIBLE | WS_CHILD | SS_CENTER,
+            300, 10, 200, 30, hWnd, NULL, NULL, NULL);
+
+        // 创建切换图表按钮
+        hSwitchButton = CreateWindow(L"BUTTON", L"切换到类别统计图", WS_VISIBLE | WS_CHILD,
+            300, 460, 200, 30, hWnd, (HMENU)IDC_BTN_SWITCH_CHART, NULL, NULL);
+
+        // 创建返回按钮
+        CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
+            350, 500, 100, 30, hWnd, (HMENU)IDC_BTN_STATS_BACK, NULL, NULL);
+
+        // 收集统计数据
+        CollectLabRoomEquipmentStats();
+        CollectCategoryEquipmentStats();
+
+        // 创建更好的字体
+        hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"微软雅黑");
+
+        break;
+    }
+
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+
+        // 设置字体
+        if (hFont) {
+            SelectObject(hdc, hFont);
+        }
+
+        // 定义扇形图绘制区域
+        RECT chartRect;
+        chartRect.left = 50;
+        chartRect.top = 50;
+        chartRect.right = 750;
+        chartRect.bottom = 450;
+
+        // 绘制背景
+        HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
+        FillRect(hdc, &chartRect, hBrush);
+        DeleteObject(hBrush);
+
+        // 绘制扇形图
+        if (showLabRoomChart) {
+            DrawPieChart(hdc, chartRect, &labRoomPieData);
+        }
+        else {
+            DrawPieChart(hdc, chartRect, &categoryPieData);
+        }
+
+        EndPaint(hWnd, &ps);
+        break;
+    }
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam)) {
+        case IDC_BTN_SWITCH_CHART:
+            // 切换图表类型
+            showLabRoomChart = !showLabRoomChart;
+
+            // 更新按钮文本
+            if (showLabRoomChart) {
+                SetWindowText(hSwitchButton, L"切换到类别统计图");
+            }
+            else {
+                SetWindowText(hSwitchButton, L"切换到实验室统计图");
+            }
+
+            // 重绘窗口
+            RefreshPresetStatsWindow(hWnd);
+            break;
+
+        case IDC_BTN_STATS_BACK:
+            // 返回主统计界面
+            ShowWindow(hwndPresetStats, SW_HIDE);
+            ShowWindow(hwndStatisticsMain, SW_SHOW);
+            break;
+        }
+        break;
+
+    case WM_CLOSE:
+        ShowWindow(hwndPresetStats, SW_HIDE);
+        ShowWindow(hwndStatisticsMain, SW_SHOW);
+        break;
+
+    case WM_DESTROY:
+        if (hFont) {
+            DeleteObject(hFont);
+            hFont = NULL;
+        }
+        break;
+
+    default:
+        return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
+    return 0;
+}
+
+
+// 设备统计窗口过程
+LRESULT CALLBACK EquipmentStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	AccountCount count;
-	memset(&count, 0, sizeof(AccountCount));
+    switch (msg)
+    {
+    case WM_CREATE:
+    {
+        // 创建标题
+        CreateWindow(L"STATIC", L"设备统计", WS_VISIBLE | WS_CHILD | SS_CENTER,
+            300, 10, 200, 30, hWnd, NULL, NULL, NULL);
 
-	count.countByType = -1;
-	count.countByRoom = -1;
-	count.count = 0;
+        // 创建按设备类型统计选项
+        hCheckByCategory = CreateWindow(L"BUTTON", L"按设备类型统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            70, 60, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_CATEGORY, NULL, NULL);
 
-	ResourceManager* rm = GetResourceManage();
-	if (!rm) return;
+        CreateWindow(L"STATIC", L"设备类型:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            220, 60, 80, 25, hWnd, NULL, NULL, NULL);
 
-	// 按账户类型统计
-	if (SendMessage(hCheckByAccountType, BM_GETCHECK, 0, 0) == BST_CHECKED)
-	{
-		count.countByType = 1;
-		int selectedIndex = SendMessage(hAccountTypeCombo, CB_GETCURSEL, 0, 0);
-		if (selectedIndex != CB_ERR)
-		{
-			// 根据下拉框选择设置账户类型
-			switch (selectedIndex)
-			{
-			case 0: count.type = Admin; break;
-			case 1: count.type = Experimenter; break;
-			case 2: count.type = User; break;
-			default: count.type = Unknow; break;
-			}
-		}
-	}
+        hCategoryCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
+            310, 60, 120, 200, hWnd, (HMENU)IDC_CATEGORY_COMBO, NULL, NULL);
 
-	// 按实验室统计（仅针对实验员）
-	if (count.type == Experimenter &&
-		SendMessage(hCheckByAccountLabroom, BM_GETCHECK, 0, 0) == BST_CHECKED)
-	{
-		count.countByRoom = 1;
-		int selectedIndex = SendMessage(hAccountLabroomCombo, CB_GETCURSEL, 0, 0);
-		if (selectedIndex != CB_ERR)
-		{
-			wchar_t buffer[100];
-			SendMessage(hAccountLabroomCombo, CB_GETLBTEXT, selectedIndex, (LPARAM)buffer);
-			// 解析出实验室ID
-			count.room_id = _wtoi(buffer);
-		}
-	}
+        // 填充设备类型下拉框
+        FillCategoryComboBox(hCategoryCombo);
 
-	// 执行统计
-	CountAccount(rm->account_list, &count);
+        // 创建按实验室统计选项
+        hCheckByLabroom = CreateWindow(L"BUTTON", L"按实验室统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            70, 100, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_LABROOM, NULL, NULL);
 
-	// 显示统计结果
-	int itemIndex = 0;
+        CreateWindow(L"STATIC", L"实验室:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            220, 100, 80, 25, hWnd, NULL, NULL, NULL);
 
-	// 添加统计条件
-	LVITEM lvi;
-	wchar_t buffer[256];
+        hLabroomCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
+            310, 100, 120, 200, hWnd, (HMENU)IDC_LABROOM_COMBO, NULL, NULL);
 
-	if (count.countByType >= 0)
-	{
-		lvi.mask = LVIF_TEXT;
-		lvi.iItem = itemIndex;
-		lvi.iSubItem = 0;
-		lvi.pszText = L"账户类型";
-		ListView_InsertItem(hListView, &lvi);
+        // 填充实验室下拉框
+        FillLabroomComboBox(hLabroomCombo);
 
-		const wchar_t* typeStr = L"";
-		switch (count.type)
-		{
-		case Admin: typeStr = L"管理员"; break;
-		case Experimenter: typeStr = L"实验员"; break;
-		case User: typeStr = L"一般用户"; break;
-		default: typeStr = L"未知"; break;
-		}
-		ListView_SetItemText(hListView, itemIndex, 1, (LPWSTR)typeStr);
-		itemIndex++;
-	}
+        // 创建按价格统计选项
+        hCheckByPrice = CreateWindow(L"BUTTON", L"按价格统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            70, 140, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_PRICE, NULL, NULL);
 
-	if (count.countByRoom >= 0)
-	{
-		LabRoom* labroom = RoomId_to_LabRoom(count.room_id);
-		if (labroom)
-		{
-			lvi.mask = LVIF_TEXT;
-			lvi.iItem = itemIndex;
-			lvi.iSubItem = 0;
-			lvi.pszText = L"所属实验室";
-			ListView_InsertItem(hListView, &lvi);
+        CreateWindow(L"STATIC", L"最低价格:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            220, 140, 80, 25, hWnd, NULL, NULL, NULL);
 
-			ListView_SetItemText(hListView, itemIndex, 1, labroom->name);
-			itemIndex++;
-		}
-	}
+        hEditMinPrice = CreateWindow(L"EDIT", L"0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_NUMBER,
+            310, 140, 80, 25, hWnd, (HMENU)IDC_EDIT_MIN_PRICE, NULL, NULL);
 
-	// 添加统计结果
-	lvi.mask = LVIF_TEXT;
-	lvi.iItem = itemIndex;
-	lvi.iSubItem = 0;
-	lvi.pszText = L"统计结果";
-	ListView_InsertItem(hListView, &lvi);
+        CreateWindow(L"STATIC", L"最高价格:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            400, 140, 80, 25, hWnd, NULL, NULL, NULL);
 
-	swprintf(buffer, 256, L"共有 %d 个账户", count.count);
-	ListView_SetItemText(hListView, itemIndex, 1, buffer);
+        hEditMaxPrice = CreateWindow(L"EDIT", L"10000", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_NUMBER,
+            490, 140, 80, 25, hWnd, (HMENU)IDC_EDIT_MAX_PRICE, NULL, NULL);
+
+        // 创建按日期统计选项
+        hCheckByDate = CreateWindow(L"BUTTON", L"按日期统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            70, 180, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_DATE, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"开始日期:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            220, 180, 80, 25, hWnd, NULL, NULL, NULL);
+
+        hEditStartDate = CreateWindow(L"EDIT", L"20200101", WS_VISIBLE | WS_CHILD | WS_BORDER,
+            310, 180, 80, 25, hWnd, (HMENU)IDC_EDIT_START_DATE, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"结束日期:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            400, 180, 80, 25, hWnd, NULL, NULL, NULL);
+
+        hEditEndDate = CreateWindow(L"EDIT", L"20240101", WS_VISIBLE | WS_CHILD | WS_BORDER,
+            490, 180, 80, 25, hWnd, (HMENU)IDC_EDIT_END_DATE, NULL, NULL);
+
+        // 创建统计结果列表视图
+        hEquipmentResultList = CreateWindowEx(0, WC_LISTVIEW, NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | LVS_REPORT,
+            50, 220, 700, 250, hWnd, (HMENU)IDC_EQUIPMENT_STATS_RESULT_LIST, NULL, NULL);
+
+        // 添加列
+        LVCOLUMN lvc;
+        lvc.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+
+        lvc.pszText = L"统计项目";
+        lvc.cx = 200;
+        lvc.iSubItem = 0;
+        ListView_InsertColumn(hEquipmentResultList, 0, &lvc);
+
+        lvc.pszText = L"统计结果";
+        lvc.cx = 470;
+        lvc.iSubItem = 1;
+        ListView_InsertColumn(hEquipmentResultList, 1, &lvc);
+
+        // 创建操作按钮
+        CreateWindow(L"BUTTON", L"执行统计", WS_VISIBLE | WS_CHILD,
+            250, 490, 100, 30, hWnd, (HMENU)IDC_BTN_EQUIPMENT_STATS_EXECUTE, NULL, NULL);
+
+        CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
+            450, 490, 100, 30, hWnd, (HMENU)IDC_BTN_EQUIPMENT_STATS_BACK, NULL, NULL);
+
+        break;
+    }
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case IDC_BTN_EQUIPMENT_STATS_EXECUTE:
+            // 清空结果列表
+            ListView_DeleteAllItems(hEquipmentResultList);
+
+            // 执行设备统计
+            ExecuteEquipmentStatistics(hWnd, hEquipmentResultList);
+            break;
+
+        case IDC_BTN_EQUIPMENT_STATS_BACK:
+            // 返回主统计界面
+            ShowWindow(hwndEquipmentStats, SW_HIDE);
+            ShowWindow(hwndStatisticsMain, SW_SHOW);
+            break;
+        }
+        break;
+
+    case WM_CLOSE:
+        ShowWindow(hwndEquipmentStats, SW_HIDE);
+        ShowWindow(hwndStatisticsMain, SW_SHOW);
+        break;
+
+    default:
+        return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
+    return 0;
 }
 
-// 统计功能窗口过程
-LRESULT CALLBACK StatisticsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+// 账户统计窗口过程
+LRESULT CALLBACK AccountStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	static HWND hRadioEquipment = NULL;
-	static HWND hRadioAccount = NULL;
-	static HWND hCategoryCombo = NULL;
-	static HWND hLabroomCombo = NULL;
-	static HWND hCheckByCategory = NULL;
-	static HWND hCheckByLabroom = NULL;
-	static HWND hCheckByPrice = NULL;
-	static HWND hCheckByDate = NULL;
-	static HWND hCheckByAccountType = NULL;
-	static HWND hCheckByAccountLabroom = NULL;
-	static HWND hEditMinPrice = NULL;
-	static HWND hEditMaxPrice = NULL;
-	static HWND hEditStartDate = NULL;
-	static HWND hEditEndDate = NULL;
-	static HWND hAccountTypeCombo = NULL;
-	static HWND hAccountLabroomCombo = NULL;
-	static HWND hResultListView = NULL;
+    switch (msg)
+    {
+    case WM_CREATE:
+    {
+        // 创建标题
+        CreateWindow(L"STATIC", L"账户统计", WS_VISIBLE | WS_CHILD | SS_CENTER,
+            300, 10, 200, 30, hWnd, NULL, NULL, NULL);
 
-	switch (msg)
-	{
-	case WM_CREATE:
-	{
-		// 创建标题
-		CreateWindow(L"STATIC", L"统计功能", WS_VISIBLE | WS_CHILD | SS_CENTER,
-			300, 10, 200, 30, hWnd, NULL, NULL, NULL);
+        // 创建按账户类型统计选项
+        hCheckByAccountType = CreateWindow(L"BUTTON", L"按账户类型统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            70, 60, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_ACCOUNT_TYPE, NULL, NULL);
 
-		// 创建分类选择单选按钮
-		hRadioEquipment = CreateWindow(L"BUTTON", L"设备统计", WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON | WS_GROUP,
-			50, 50, 100, 30, hWnd, (HMENU)IDC_RADIO_STATS_EQUIPMENT, NULL, NULL);
-		hRadioAccount = CreateWindow(L"BUTTON", L"账户统计", WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,
-			200, 50, 100, 30, hWnd, (HMENU)IDC_RADIO_STATS_ACCOUNT, NULL, NULL);
+        CreateWindow(L"STATIC", L"账户类型:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            220, 60, 80, 25, hWnd, NULL, NULL, NULL);
 
-		// 默认选择设备统计
-		SendMessage(hRadioEquipment, BM_SETCHECK, BST_CHECKED, 0);
+        hAccountTypeCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
+            310, 60, 150, 200, hWnd, (HMENU)IDC_ACCOUNT_TYPE_COMBO, NULL, NULL);
 
-		// 创建设备统计分组框
-		hwndEquipmentGroup = CreateWindow(L"BUTTON", L"设备统计选项", WS_VISIBLE | WS_CHILD | BS_GROUPBOX,
-			50, 90, 700, 200, hWnd, NULL, NULL, NULL);
+        // 填充账户类型下拉框
+        SendMessage(hAccountTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"管理员");
+        SendMessage(hAccountTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"实验员");
+        SendMessage(hAccountTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"一般用户");
+        SendMessage(hAccountTypeCombo, CB_SETCURSEL, 0, 0);
 
-		// 创建按设备类型统计选项
-		hCheckByCategory = CreateWindow(L"BUTTON", L"按设备类型统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-			70, 120, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_CATEGORY, NULL, NULL);
+        // 创建按实验室统计选项（仅针对实验员）
+        hCheckByAccountLabroom = CreateWindow(L"BUTTON", L"按实验室统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            70, 100, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_ACCOUNT_LABROOM, NULL, NULL);
 
-		CreateWindow(L"STATIC", L"设备类型:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-			220, 120, 80, 25, hWnd, NULL, NULL, NULL);
+        CreateWindow(L"STATIC", L"实验室:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+            220, 100, 80, 25, hWnd, NULL, NULL, NULL);
 
-		hCategoryCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
-			310, 120, 120, 200, hWnd, (HMENU)IDC_CATEGORY_COMBO, NULL, NULL);
+        hAccountLabroomCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
+            310, 100, 120, 200, hWnd, (HMENU)IDC_ACCOUNT_LABROOM_COMBO, NULL, NULL);
 
-		// 填充设备类型下拉框
-		FillCategoryComboBox(hCategoryCombo);
+        // 填充实验室下拉框
+        FillLabroomComboBox(hAccountLabroomCombo);
 
-		// 创建按实验室统计选项
-		hCheckByLabroom = CreateWindow(L"BUTTON", L"按实验室统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-			70, 150, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_LABROOM, NULL, NULL);
+        // 创建统计结果列表视图
+        hAccountResultList = CreateWindowEx(0, WC_LISTVIEW, NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | LVS_REPORT,
+            50, 150, 700, 300, hWnd, (HMENU)IDC_ACCOUNT_STATS_RESULT_LIST, NULL, NULL);
 
-		CreateWindow(L"STATIC", L"实验室:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-			220, 150, 80, 25, hWnd, NULL, NULL, NULL);
+        // 添加列
+        LVCOLUMN lvc;
+        lvc.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 
-		hLabroomCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
-			310, 150, 120, 200, hWnd, (HMENU)IDC_LABROOM_COMBO, NULL, NULL);
+        lvc.pszText = L"统计项目";
+        lvc.cx = 200;
+        lvc.iSubItem = 0;
+        ListView_InsertColumn(hAccountResultList, 0, &lvc);
 
-		// 填充实验室下拉框
-		FillLabroomComboBox(hLabroomCombo);
+        lvc.pszText = L"统计结果";
+        lvc.cx = 470;
+        lvc.iSubItem = 1;
+        ListView_InsertColumn(hAccountResultList, 1, &lvc);
 
-		// 创建按价格统计选项
-		hCheckByPrice = CreateWindow(L"BUTTON", L"按价格统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-			70, 180, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_PRICE, NULL, NULL);
+        // 创建操作按钮
+        CreateWindow(L"BUTTON", L"执行统计", WS_VISIBLE | WS_CHILD,
+            250, 490, 100, 30, hWnd, (HMENU)IDC_BTN_ACCOUNT_STATS_EXECUTE, NULL, NULL);
 
-		CreateWindow(L"STATIC", L"最低价格:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-			220, 180, 80, 25, hWnd, NULL, NULL, NULL);
+        CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
+            450, 490, 100, 30, hWnd, (HMENU)IDC_BTN_ACCOUNT_STATS_BACK, NULL, NULL);
 
-		hEditMinPrice = CreateWindow(L"EDIT", L"0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_NUMBER,
-			310, 180, 80, 25, hWnd, (HMENU)IDC_EDIT_MIN_PRICE, NULL, NULL);
+        break;
+    }
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case IDC_BTN_ACCOUNT_STATS_EXECUTE:
+            // 清空结果列表
+            ListView_DeleteAllItems(hAccountResultList);
 
-		CreateWindow(L"STATIC", L"最高价格:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-			400, 180, 80, 25, hWnd, NULL, NULL, NULL);
+            // 执行账户统计
+            ExecuteAccountStatistics(hWnd, hAccountResultList);
+            break;
 
-		hEditMaxPrice = CreateWindow(L"EDIT", L"10000", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_NUMBER,
-			490, 180, 80, 25, hWnd, (HMENU)IDC_EDIT_MAX_PRICE, NULL, NULL);
+        case IDC_BTN_ACCOUNT_STATS_BACK:
+            // 返回主统计界面
+            ShowWindow(hwndAccountStats, SW_HIDE);
+            ShowWindow(hwndStatisticsMain, SW_SHOW);
+            break;
+        }
+        break;
 
-		// 创建按日期统计选项
-		hCheckByDate = CreateWindow(L"BUTTON", L"按日期统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-			70, 210, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_DATE, NULL, NULL);
+    case WM_CLOSE:
+        ShowWindow(hwndAccountStats, SW_HIDE);
+        ShowWindow(hwndStatisticsMain, SW_SHOW);
+        break;
 
-		CreateWindow(L"STATIC", L"开始日期:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-			220, 210, 80, 25, hWnd, NULL, NULL, NULL);
-
-		hEditStartDate = CreateWindow(L"EDIT", L"20200101", WS_VISIBLE | WS_CHILD | WS_BORDER,
-			310, 210, 80, 25, hWnd, (HMENU)IDC_EDIT_START_DATE, NULL, NULL);
-
-		CreateWindow(L"STATIC", L"结束日期:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-			400, 210, 80, 25, hWnd, NULL, NULL, NULL);
-
-		hEditEndDate = CreateWindow(L"EDIT", L"20240101", WS_VISIBLE | WS_CHILD | WS_BORDER,
-			490, 210, 80, 25, hWnd, (HMENU)IDC_EDIT_END_DATE, NULL, NULL);
-
-		// 创建账户统计分组框（初始隐藏）
-		hwndAccountGroup = CreateWindow(L"BUTTON", L"账户统计选项", WS_CHILD | BS_GROUPBOX,
-			50, 90, 700, 200, hWnd, NULL, NULL, NULL);
-
-		// 创建按账户类型统计选项
-		hCheckByAccountType = CreateWindow(L"BUTTON", L"按账户类型统计", WS_CHILD | BS_AUTOCHECKBOX,
-			70, 120, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_ACCOUNT_TYPE, NULL, NULL);
-
-		CreateWindow(L"STATIC", L"账户类型:", WS_CHILD | SS_RIGHT,
-			220, 120, 80, 25, hWnd, NULL, NULL, NULL);
-
-		hAccountTypeCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
-			310, 120, 150, 200, hWnd, (HMENU)IDC_ACCOUNT_TYPE_COMBO, NULL, NULL);
-
-		// 填充账户类型下拉框
-		SendMessage(hAccountTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"管理员");
-		SendMessage(hAccountTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"实验员");
-		SendMessage(hAccountTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"一般用户");
-		SendMessage(hAccountTypeCombo, CB_SETCURSEL, 0, 0);
-
-		// 创建按实验室统计选项（仅针对实验员）
-		hCheckByAccountLabroom = CreateWindow(L"BUTTON", L"按实验室统计（仅实验员）", WS_CHILD | BS_AUTOCHECKBOX,
-			70, 150, 200, 25, hWnd, (HMENU)IDC_CHECK_BY_ACCOUNT_LABROOM, NULL, NULL);
-
-		CreateWindow(L"STATIC", L"实验室:", WS_CHILD | SS_RIGHT,
-			280, 150, 60, 25, hWnd, NULL, NULL, NULL);
-
-		hAccountLabroomCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
-			350, 150, 120, 200, hWnd, (HMENU)IDC_ACCOUNT_LABROOM_COMBO, NULL, NULL);
-
-		// 填充实验室下拉框（与设备统计共用相同数据）
-		FillLabroomComboBox(hAccountLabroomCombo);
-
-		// 创建统计结果列表视图
-		hResultListView = CreateWindowEx(0, WC_LISTVIEW, NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | LVS_REPORT,
-			50, 300, 700, 200, hWnd, (HMENU)IDC_STATS_RESULT_LIST, NULL, NULL);
-
-		// 添加列
-		LVCOLUMN lvc;
-		lvc.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-
-		lvc.pszText = L"统计项目";
-		lvc.cx = 200;
-		lvc.iSubItem = 0;
-		ListView_InsertColumn(hResultListView, 0, &lvc);
-
-		lvc.pszText = L"统计结果";
-		lvc.cx = 470;
-		lvc.iSubItem = 1;
-		ListView_InsertColumn(hResultListView, 1, &lvc);
-
-		// 创建执行统计按钮
-		CreateWindow(L"BUTTON", L"执行统计", WS_VISIBLE | WS_CHILD,
-			250, 520, 100, 30, hWnd, (HMENU)IDC_BTN_STATS_EXECUTE, NULL, NULL);
-
-		// 创建返回按钮
-		CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
-			450, 520, 100, 30, hWnd, (HMENU)IDC_BTN_STATS_BACK, NULL, NULL);
-
-		break;
-	}
-
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDC_RADIO_STATS_EQUIPMENT:
-			if (HIWORD(wParam) == BN_CLICKED)
-			{
-				// 显示设备统计选项，隐藏账户统计选项
-				ShowWindow(hwndEquipmentGroup, SW_SHOW);
-				ShowWindow(hwndAccountGroup, SW_HIDE);
-
-				// 显示设备统计的所有子控件
-				ShowWindow(hCheckByCategory, SW_SHOW);
-				ShowWindow(hCategoryCombo, SW_SHOW);
-				ShowWindow(hCheckByLabroom, SW_SHOW);
-				ShowWindow(hLabroomCombo, SW_SHOW);
-				ShowWindow(hCheckByPrice, SW_SHOW);
-				ShowWindow(hEditMinPrice, SW_SHOW);
-				ShowWindow(hEditMaxPrice, SW_SHOW);
-				ShowWindow(hCheckByDate, SW_SHOW);
-				ShowWindow(hEditStartDate, SW_SHOW);
-				ShowWindow(hEditEndDate, SW_SHOW);
-
-				// 隐藏账户统计的所有子控件
-				ShowWindow(hCheckByAccountType, SW_HIDE);
-				ShowWindow(hAccountTypeCombo, SW_HIDE);
-				ShowWindow(hCheckByAccountLabroom, SW_HIDE);
-				ShowWindow(hAccountLabroomCombo, SW_HIDE);
-			}
-			break;
-
-		case IDC_RADIO_STATS_ACCOUNT:
-			if (HIWORD(wParam) == BN_CLICKED)
-			{
-				// 显示账户统计选项，隐藏设备统计选项
-				ShowWindow(hwndEquipmentGroup, SW_HIDE);
-				ShowWindow(hwndAccountGroup, SW_SHOW);
-
-				// 隐藏设备统计的所有子控件
-				ShowWindow(hCheckByCategory, SW_HIDE);
-				ShowWindow(hCategoryCombo, SW_HIDE);
-				ShowWindow(hCheckByLabroom, SW_HIDE);
-				ShowWindow(hLabroomCombo, SW_HIDE);
-				ShowWindow(hCheckByPrice, SW_HIDE);
-				ShowWindow(hEditMinPrice, SW_HIDE);
-				ShowWindow(hEditMaxPrice, SW_HIDE);
-				ShowWindow(hCheckByDate, SW_HIDE);
-				ShowWindow(hEditStartDate, SW_HIDE);
-				ShowWindow(hEditEndDate, SW_HIDE);
-
-				// 显示账户统计的所有子控件
-				ShowWindow(hCheckByAccountType, SW_SHOW);
-				ShowWindow(hAccountTypeCombo, SW_SHOW);
-				ShowWindow(hCheckByAccountLabroom, SW_SHOW);
-				ShowWindow(hAccountLabroomCombo, SW_SHOW);
-			}
-			break;
-
-		case IDC_BTN_STATS_EXECUTE:
-			// 清空结果列表
-			ListView_DeleteAllItems(hResultListView);
-
-			// 判断是设备统计还是账户统计
-			if (SendMessage(hRadioEquipment, BM_GETCHECK, 0, 0) == BST_CHECKED)
-			{
-				// 设备统计
-				ExecuteEquipmentStatistics(hWnd, hResultListView, hCheckByCategory, hCategoryCombo,
-					hCheckByLabroom, hLabroomCombo, hCheckByPrice,
-					hEditMinPrice, hEditMaxPrice, hCheckByDate,
-					hEditStartDate, hEditEndDate);
-			}
-			else
-			{
-				// 账户统计
-				ExecuteAccountStatistics(hWnd, hResultListView, hCheckByAccountType,
-					hAccountTypeCombo, hCheckByAccountLabroom,
-					hAccountLabroomCombo);
-			}
-			break;
-
-		case IDC_BTN_STATS_BACK:
-			DestroyWindow(hWnd);
-			break;
-		}
-		break;
-
-	case WM_CLOSE:
-		DestroyWindow(hWnd);
-		break;
-
-	case WM_DESTROY:
-		hwndStatistics = NULL;
-		ShowWindow(hwndSystemMaintenance, SW_SHOW);
-		break;
-	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+    default:
+        return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
+    return 0;
 }
 
+// 统计主界面窗口过程
+LRESULT CALLBACK StatisticsMainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+    case WM_CREATE:
+    {
+        // 创建标题
+        CreateWindow(L"STATIC", L"统计功能", WS_VISIBLE | WS_CHILD | SS_CENTER,
+            150, 10, 100, 30, hWnd, NULL, NULL, NULL);
 
-// 显示统计功能窗口
+        // 创建子功能按钮 - 按钮变小并调整位置
+        CreateWindow(L"BUTTON", L"预设统计", WS_VISIBLE | WS_CHILD,
+            125, 60, 150, 40, hWnd, (HMENU)IDC_BTN_PRESET_STATS, NULL, NULL);
+
+        CreateWindow(L"BUTTON", L"设备统计", WS_VISIBLE | WS_CHILD,
+            125, 110, 150, 40, hWnd, (HMENU)IDC_BTN_EQUIPMENT_STATS, NULL, NULL);
+
+        CreateWindow(L"BUTTON", L"账户统计", WS_VISIBLE | WS_CHILD,
+            125, 160, 150, 40, hWnd, (HMENU)IDC_BTN_ACCOUNT_STATS, NULL, NULL);
+
+        // 创建返回按钮
+        CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
+            125, 220, 150, 40, hWnd, (HMENU)IDC_BTN_STATS_BACK, NULL, NULL);
+
+        // 创建子窗口
+        WNDCLASS wc = { 0 };
+
+        // 预设统计窗口
+        wc.lpfnWndProc = PresetStatsWndProc;
+        wc.hInstance = GetModuleHandle(NULL);
+        wc.lpszClassName = L"PresetStatsWindow";
+        RegisterClass(&wc);
+
+        // 设备统计窗口
+        wc.lpfnWndProc = EquipmentStatsWndProc;
+        wc.hInstance = GetModuleHandle(NULL);
+        wc.lpszClassName = L"EquipmentStatsWindow";
+        RegisterClass(&wc);
+
+        // 账户统计窗口
+        wc.lpfnWndProc = AccountStatsWndProc;
+        wc.hInstance = GetModuleHandle(NULL);
+        wc.lpszClassName = L"AccountStatsWindow";
+        RegisterClass(&wc);
+
+        // 创建预设统计窗口
+        hwndPresetStats = CreateWindow(L"PresetStatsWindow", L"预设统计",
+            WS_OVERLAPPED | WS_SYSMENU, 100, 50, 800, 600, hWnd, NULL, GetModuleHandle(NULL), NULL);
+
+        // 创建设备统计窗口
+        hwndEquipmentStats = CreateWindow(L"EquipmentStatsWindow", L"设备统计",
+            WS_OVERLAPPED | WS_SYSMENU, 100, 50, 800, 600, hWnd, NULL, GetModuleHandle(NULL), NULL);
+
+        // 创建账户统计窗口
+        hwndAccountStats = CreateWindow(L"AccountStatsWindow", L"账户统计",
+            WS_OVERLAPPED | WS_SYSMENU, 100, 50, 800, 600, hWnd, NULL, GetModuleHandle(NULL), NULL);
+
+        break;
+    }
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case IDC_BTN_PRESET_STATS:
+            // 显示预设统计窗口
+            ShowWindow(hwndStatisticsMain, SW_HIDE);
+            ShowWindow(hwndPresetStats, SW_SHOW);
+            break;
+
+        case IDC_BTN_EQUIPMENT_STATS:
+            // 显示设备统计窗口
+            ShowWindow(hwndStatisticsMain, SW_HIDE);
+            ShowWindow(hwndEquipmentStats, SW_SHOW);
+            break;
+
+        case IDC_BTN_ACCOUNT_STATS:
+            // 显示账户统计窗口
+            ShowWindow(hwndStatisticsMain, SW_HIDE);
+            ShowWindow(hwndAccountStats, SW_SHOW);
+            break;
+
+        case IDC_BTN_STATS_BACK:
+            // 返回上一级菜单
+            DestroyWindow(hwndPresetStats);
+            DestroyWindow(hwndEquipmentStats);
+            DestroyWindow(hwndAccountStats);
+            DestroyWindow(hwndStatisticsMain);
+            break;
+        }
+        break;
+
+    case WM_CLOSE:
+        DestroyWindow(hwndPresetStats);
+        DestroyWindow(hwndEquipmentStats);
+        DestroyWindow(hwndAccountStats);
+        DestroyWindow(hwndStatisticsMain);
+        break;
+
+    case WM_DESTROY:
+        hwndPresetStats = NULL;
+        hwndEquipmentStats = NULL;
+        hwndAccountStats = NULL;
+        hwndStatisticsMain = NULL;
+        ShowWindow(hwndSystemMaintenance, SW_SHOW);
+        break;
+    }
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+// 显示统计功能主界面
 void ShowStatisticsWindow(HWND hWnd)
 {
-	WNDCLASS wc = { 0 };
-	wc.lpfnWndProc = StatisticsWndProc;
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpszClassName = L"StatisticsWindow";
+    WNDCLASS wc = { 0 };
+    wc.lpfnWndProc = StatisticsMainWndProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = L"StatisticsMainWindow";
 
-	RegisterClass(&wc);
+    RegisterClass(&wc);
 
-	hwndStatistics = CreateWindow(L"StatisticsWindow", L"统计功能",
-		WS_OVERLAPPED | WS_SYSMENU, 100, 50, 800, 600, hWnd, NULL, GetModuleHandle(NULL), NULL);
+    hwndStatisticsMain = CreateWindow(L"StatisticsMainWindow", L"统计功能",
+        WS_OVERLAPPED | WS_SYSMENU, 100, 50,450 , 350, hWnd, NULL, GetModuleHandle(NULL), NULL);
 
-	ShowWindow(hwndStatistics, SW_SHOW);
-	UpdateWindow(hwndStatistics);
+    ShowWindow(hwndStatisticsMain, SW_SHOW);
+    UpdateWindow(hwndStatisticsMain);
 }
 
