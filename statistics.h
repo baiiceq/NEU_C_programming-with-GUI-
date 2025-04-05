@@ -7,7 +7,8 @@
 #include "string.h"
 #include <math.h>
 
-// 统计功能ID定义
+
+    // 统计功能ID定义
 #define ID_BTN_STATISTICS 1010
 
 // 统计主界面控件ID
@@ -30,6 +31,8 @@
 #define IDC_BTN_EQUIPMENT_STATS_EXECUTE 1125
 #define IDC_BTN_EQUIPMENT_STATS_BACK 1126
 #define IDC_EQUIPMENT_STATS_RESULT_LIST 1127
+#define IDC_CHECK_BY_STATUS 1128
+#define IDC_STATUS_COMBO 1129 
 
 // 账户统计控件ID
 #define IDC_CHECK_BY_ACCOUNT_TYPE 1130
@@ -39,6 +42,11 @@
 #define IDC_BTN_ACCOUNT_STATS_EXECUTE 1134
 #define IDC_BTN_ACCOUNT_STATS_BACK 1135
 #define IDC_ACCOUNT_STATS_RESULT_LIST 1136
+
+// 扇形图相关的控件ID
+#define IDC_PIE_CHART_AREA 1501
+#define IDC_BTN_SWITCH_CHART 1502
+#define MAX_PIE_ITEMS 30  // 扇形图最大项数
 
 // 全局窗口句柄
 static HWND hwndStatisticsMain = NULL;          // 统计主界面
@@ -58,6 +66,9 @@ static HWND hCheckByDate = NULL;
 static HWND hEditStartDate = NULL;
 static HWND hEditEndDate = NULL;
 static HWND hEquipmentResultList = NULL;
+static HWND hCheckByStatus = NULL; 
+static HWND hStatusCombo = NULL; // 设备状态下拉框
+
 
 // 账户统计窗口控件句柄
 static HWND hCheckByAccountType = NULL;
@@ -78,8 +89,10 @@ typedef struct _EquipmentsCount
     int countByRoom;
     int countByDate;
     int countByPrice;
+    int countByState;
     int min_price;
     int max_price;
+	EquipmentState state;
     wchar_t startDate[DATE_LENGTH];
     wchar_t endDate[DATE_LENGTH];
     int count;
@@ -152,8 +165,10 @@ void CountEquipment(LinkedList* list, EquipmentsCount* Count)
             (strcmp(ee->purchase_date, Count->startDate) >= 0 && strcmp(ee->purchase_date, Count->endDate) <= 0);
         bool is_price_conform = Count->countByPrice < 0 ||
             (ee->price >= Count->min_price && ee->price <= Count->max_price);
+		bool is_state_conform = Count->countByState < 0 ||
+			(Count->countByState >= 0 && Count->state == ee->state);
 
-        if (is_category_conform && is_roomid_conform && is_date_conform && is_price_conform)
+        if (is_category_conform && is_roomid_conform && is_date_conform && is_price_conform&&is_state_conform)
         {
             Count->count++;
         }
@@ -171,6 +186,7 @@ void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView)
     count.countByRoom = -1;
     count.countByPrice = -1;
     count.countByDate = -1;
+	count.countByState = -1;
     count.count = 0;
 
     ResourceManager* rm = GetResourceManage();
@@ -232,6 +248,24 @@ void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView)
         GetWindowText(hEditEndDate, count.endDate, DATE_LENGTH);
     }
 
+    if (SendMessageW(hCheckByStatus, BM_GETCHECK, 0, 0) == BST_CHECKED)
+    {
+		count.countByState = 1;
+		int selectedIndex = SendMessage(hStatusCombo, CB_GETCURSEL, 0, 0);
+		if (selectedIndex != CB_ERR)
+		{
+			switch (selectedIndex)
+			{
+			case 0: count.state = Using; break;
+			case 1: count.state = Idle; break;
+			case 2: count.state = Lost; break;
+			case 3: count.state = Damaged; break;
+			case 4: count.state = Scrapped; break;
+			case 5: count.state = Repairing; break;
+			default: count.state = Using; break;
+			}
+		}
+    }
     // 执行统计
     CountEquipment(rm->equipment_list, &count);
 
@@ -302,6 +336,27 @@ void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView)
         swprintf(buffer, 256, L"%s - %s", startDate, endDate);
         ListView_SetItemText(hListView, itemIndex, 1, buffer);
         itemIndex++;
+    }
+
+    if (count.countByState >= 0)
+    {
+		lvi.mask = LVIF_TEXT;
+		lvi.iItem = itemIndex;
+		lvi.iSubItem = 0;
+		lvi.pszText = L"设备状态";
+		ListView_InsertItem(hListView, &lvi);
+		const wchar_t* stateStr = L"";
+        switch (count.state)
+        {
+        case Using: stateStr = L"正在使用"; break;
+        case Idle: stateStr = L"空闲"; break;
+        case Lost: stateStr = L"遗失"; break;
+        case Damaged: stateStr = L"损坏"; break;
+        case Scrapped: stateStr = L"报废"; break;
+        default: stateStr = L"正在维修"; break;
+        }
+		ListView_SetItemText(hListView, itemIndex, 1, stateStr);
+		itemIndex++;
     }
 
     // 添加统计结果
@@ -439,18 +494,12 @@ void ExecuteAccountStatistics(HWND hWnd, HWND hListView)
     ListView_SetItemText(hListView, itemIndex, 1, buffer);
 }
 
-// 扇形图相关的控件ID
-#define IDC_PIE_CHART_AREA 1501
-#define IDC_BTN_SWITCH_CHART 1502
-
 // 扇形图数据结构
 typedef struct _PieChartItem {
     wchar_t label[50];         //小饼的标签
 	int value;                 //小饼的值
 	COLORREF color;            //小饼的颜色
 } PieChartItem;
-
-#define MAX_PIE_ITEMS 30  // 扇形图最大项数
 
 // 扇形图完整数据
 typedef struct _PieChartData {
@@ -840,9 +889,26 @@ LRESULT CALLBACK EquipmentStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
         hEditEndDate = CreateWindow(L"EDIT", L"20240101", WS_VISIBLE | WS_CHILD | WS_BORDER,
             490, 180, 80, 25, hWnd, (HMENU)IDC_EDIT_END_DATE, NULL, NULL);
 
+		//创建按设备状态统计选项
+		hCheckByStatus = CreateWindow(L"BUTTON", L"按设备状态统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+			70, 220, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_STATUS, NULL, NULL);
+		CreateWindow(L"STATIC", L"设备状态:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+			220, 220, 80, 25, hWnd, NULL, NULL, NULL);
+		hStatusCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
+			310, 220, 120, 200, hWnd, (HMENU)IDC_STATUS_COMBO, NULL, NULL);
+		// 填充设备状态下拉框
+		SendMessage(hStatusCombo, CB_ADDSTRING, 0, (LPARAM)L"Using");
+		SendMessage(hStatusCombo, CB_ADDSTRING, 0, (LPARAM)L"Idle");
+		SendMessage(hStatusCombo, CB_ADDSTRING, 0, (LPARAM)L"Lost");
+		SendMessage(hStatusCombo, CB_ADDSTRING, 0, (LPARAM)L"Damaged");
+		SendMessage(hStatusCombo, CB_ADDSTRING, 0, (LPARAM)L"Scrapped");
+		SendMessage(hStatusCombo, CB_ADDSTRING, 0, (LPARAM)L"Repairing");
+		SendMessage(hStatusCombo, CB_SETCURSEL, 0, 0);
+
+
         // 创建统计结果列表视图
         hEquipmentResultList = CreateWindowEx(0, WC_LISTVIEW, NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | LVS_REPORT,
-            50, 220, 700, 250, hWnd, (HMENU)IDC_EQUIPMENT_STATS_RESULT_LIST, NULL, NULL);
+            50, 260, 700, 210, hWnd, (HMENU)IDC_EQUIPMENT_STATS_RESULT_LIST, NULL, NULL);
 
         // 添加列
         LVCOLUMN lvc;
