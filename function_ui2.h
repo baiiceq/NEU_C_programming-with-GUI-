@@ -33,6 +33,8 @@
 //数据恢复窗口ID
 #define IDC_RESTORE_TIME                1402
 
+
+
 // 系统维护窗口过程函数
 LRESULT CALLBACK SystemMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -63,3 +65,16 @@ void FillUserList(HWND hListView);
 
 // 重置指定用户的密码
 bool ResetUserPassword(int userId, const wchar_t* newPassword);
+
+//LRESULT CALLBACK StatisticsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+//void FillCategoryComboBox(HWND hComboBox);
+//void FillLabroomComboBox(HWND hComboBox);
+//void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView, HWND hCheckByCategory, HWND hCategoryCombo,
+//    HWND hCheckByLabroom, HWND hLabroomCombo, HWND hCheckByPrice,
+//    HWND hEditMinPrice, HWND hEditMaxPrice, HWND hCheckByDate,
+//    HWND hEditStartDate, HWND hEditEndDate);
+//void ExecuteAccountStatistics(HWND hWnd, HWND hListView, HWND hCheckByAccountType,
+//    HWND hAccountTypeCombo, HWND hCheckByAccountLabroom,
+//    HWND hAccountLabroomCombo);
+//void ShowStatisticsWindow(HWND hWnd);

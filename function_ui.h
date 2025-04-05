@@ -32,6 +32,4 @@ void ShowInfoManagementWindow(HWND hWnd);
 
 void ShowSortWindow(HWND hWnd);
 
-void ShowStatisticsWindow(HWND hWnd);
-
 

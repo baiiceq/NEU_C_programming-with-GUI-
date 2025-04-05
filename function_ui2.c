@@ -120,7 +120,6 @@ LRESULT CALLBACK SystemMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LP
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-
 // 修改自己密码窗口过程
 LRESULT CALLBACK PasswordMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -550,8 +549,6 @@ LRESULT CALLBACK RestoreDataWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-
-
 void ShowSystemMaintenanceWindow(HWND hWnd)
 {
 	WNDCLASS wc = { 0 };
@@ -720,3 +717,6 @@ bool ResetUserPassword(int userId, const wchar_t* newPassword)
 	wcscpy_s(account->user_password, USER_PASSWORD_LENGTH, newPassword);
 	return True;
 }
+
+
+
