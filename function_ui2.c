@@ -182,20 +182,20 @@ LRESULT CALLBACK PasswordMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, 
 			MessageBox(NULL, L"密码修改成功", L"提示", MB_OK);
 			DestroyWindow(hWnd);
 
-			/*wchar_t operation[20];
-			switch (account->account_type)
+			char operation[20];
+			switch (em->current_account->account_type)
 			{
 			case Admin:
-				wcscpy_s(operation, 20, L"修改管理员密码");
+				strcpy_s(operation, 20, L"修改管理员密码");
 				break;
 			case User:
-				wcscpy_s(operation, 20, L"修改一般用户密码");
+				strcpy_s(operation, 20, L"修改一般用户密码");
 				break;
 			case Experimenter:
-				wcscpy_s(operation, 20, L"修改实验员密码");
+				strcpy_s(operation, 20, L"修改实验员密码");
 				break;
 			}
-			LogSystemOperation(operation, account->id);*/
+			LogSystemOperation(operation, em->current_account->id);
 		}
 		break;
 		case IDC_BTN_CANCEL:
