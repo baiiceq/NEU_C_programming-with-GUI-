@@ -33,6 +33,27 @@
 //数据恢复窗口ID
 #define IDC_RESTORE_TIME                1402
 
+#define ID_BTN_STATISTICS 1010
+#define IDC_RADIO_STATS_EQUIPMENT 1011
+#define IDC_RADIO_STATS_ACCOUNT 1012
+#define IDC_CATEGORY_COMBO 1013
+#define IDC_LABROOM_COMBO 1014
+#define IDC_CHECK_BY_CATEGORY 1015
+#define IDC_CHECK_BY_LABROOM 1016
+#define IDC_CHECK_BY_PRICE 1017
+#define IDC_CHECK_BY_DATE 1018
+#define IDC_CHECK_BY_ACCOUNT_TYPE 1019
+#define IDC_CHECK_BY_ACCOUNT_LABROOM 1020
+#define IDC_EDIT_MIN_PRICE 1021
+#define IDC_EDIT_MAX_PRICE 1022
+#define IDC_EDIT_START_DATE 1023
+#define IDC_EDIT_END_DATE 1024
+#define IDC_ACCOUNT_TYPE_COMBO 1025
+#define IDC_ACCOUNT_LABROOM_COMBO 1026
+#define IDC_BTN_STATS_EXECUTE 1027
+#define IDC_BTN_STATS_BACK 1028
+#define IDC_STATS_RESULT_LIST 1029
+
 // 系统维护窗口过程函数
 LRESULT CALLBACK SystemMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -63,3 +84,16 @@ void FillUserList(HWND hListView);
 
 // 重置指定用户的密码
 bool ResetUserPassword(int userId, const wchar_t* newPassword);
+
+LRESULT CALLBACK StatisticsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+void FillCategoryComboBox(HWND hComboBox);
+void FillLabroomComboBox(HWND hComboBox);
+void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView, HWND hCheckByCategory, HWND hCategoryCombo,
+    HWND hCheckByLabroom, HWND hLabroomCombo, HWND hCheckByPrice,
+    HWND hEditMinPrice, HWND hEditMaxPrice, HWND hCheckByDate,
+    HWND hEditStartDate, HWND hEditEndDate);
+void ExecuteAccountStatistics(HWND hWnd, HWND hListView, HWND hCheckByAccountType,
+    HWND hAccountTypeCombo, HWND hCheckByAccountLabroom,
+    HWND hAccountLabroomCombo);
+void ShowStatisticsWindow(HWND hWnd);

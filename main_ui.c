@@ -7,6 +7,7 @@
 #include <string.h>
 #include "function_ui2.h"
 
+
 extern EquipmentManagement* em;
 
 HWND hwndLogin, hwndRegister, hwndAdminManagement;
@@ -220,7 +221,7 @@ LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             //ShowSortWindow(hWnd);
             break;
         case ID_BTN_STATISTICS:
-            //ShowStatisticsWindow(hWnd);
+            ShowStatisticsWindow(hWnd);
             break;
         case ID_BTN_SYSTEM_MAINT:
             ShowSystemMaintenanceWindow(hWnd);
