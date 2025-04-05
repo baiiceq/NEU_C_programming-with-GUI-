@@ -186,13 +186,13 @@ LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         CreateWindow(L"STATIC", L"对实验中心的房间、实验员、设备类别、设备的基本信息进行管理", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 120, 480, 40, hWnd, NULL, NULL, NULL);
 
         CreateWindow(L"BUTTON", L"信息查询", WS_VISIBLE | WS_CHILD, 90, 180, 120, 40, hWnd, (HMENU)ID_BTN_QUERY, NULL, NULL);
-        CreateWindow(L"STATIC", L"对实验中心的房间、实验员、设备类别、设备的信息进行查询", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 180, 480, 40, hWnd, NULL, NULL, NULL);
+        CreateWindow(L"STATIC", L"对实验中心的房间、账户、设备类别、设备的信息进行查询", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 180, 480, 40, hWnd, NULL, NULL, NULL);
 
         CreateWindow(L"BUTTON", L"信息排序", WS_VISIBLE | WS_CHILD, 90, 240, 120, 40, hWnd, (HMENU)ID_BTN_SORT, NULL, NULL);
-        CreateWindow(L"STATIC", L"对实验中心的房间、实验员、设备类别、设备的信息进行排序", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 240, 480, 40, hWnd, NULL, NULL, NULL);
+        CreateWindow(L"STATIC", L"对实验中心的房间、账户、设备类别、设备的信息进行排序", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 240, 480, 40, hWnd, NULL, NULL, NULL);
 
         CreateWindow(L"BUTTON", L"信息统计", WS_VISIBLE | WS_CHILD, 90, 300, 120, 40, hWnd, (HMENU)ID_BTN_STATISTICS, NULL, NULL);
-        CreateWindow(L"STATIC", L"对实验中心的房间、实验员、设备类别、设备的信息进行统计", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 300, 480, 40, hWnd, NULL, NULL, NULL);
+        CreateWindow(L"STATIC", L"对实验中心的房间、账户、设备类别、设备的信息进行统计", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 300, 480, 40, hWnd, NULL, NULL, NULL);
 
         CreateWindow(L"BUTTON", L"系统维护", WS_VISIBLE | WS_CHILD, 90, 360, 120, 40, hWnd, (HMENU)ID_BTN_SYSTEM_MAINT, NULL, NULL);
         CreateWindow(L"STATIC", L"对密码进行维护、对其他用户的密码进行重置、数据备份、数据恢复", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 360, 480, 40, hWnd, NULL, NULL, NULL);
