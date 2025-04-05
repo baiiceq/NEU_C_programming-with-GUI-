@@ -6,6 +6,26 @@
 #include "configs.h"
 
 #include <Windows.h>
+#include <CommCtrl.h>
+
+#define IDC_TAB 3000
+#define IDC_EDIT_NAME 3001
+#define IDC_EDIT_MIN_PRICE 3002
+#define IDC_EDIT_MAX_PRICE 3003
+#define IDC_EDIT_ROOM_ID 3004
+#define IDC_MIN_DATE 3005
+#define IDC_MAX_DATE 3006
+#define IDC_EDIT_ID 3007
+#define IDC_COMBOX_CATEGORY 3008
+#define IDC_LISTVIEW 3009
+#define IDC_STATIC 3010
+#define IDC_BUTTON_QUERY 3011
+#define IDC_BUTTON_EXIT 3012
+
+extern HWND hwndAdminManagement;
+
+HWND hwndfuncQuery;
+HWND hMainTab;
 
 typedef bool (*QueryCondition)(void* data, void* param);
 
@@ -436,7 +456,114 @@ void QueryCategoryMenu()
     Query(list, QueryCategoryCondition, &query, PrintCategory);
 }
 
+void CreateButtonsQuery(HWND hWnd, int tabIndex)
+{
+    HWND h;
+    int idc = IDC_EDIT_NAME;
+    for (int i = idc; i <= 3011; i++)
+    {
+        while ((h = GetDlgItem(hWnd, i)) != NULL)
+            DestroyWindow(h);
+    }
+
+    ResourceManager* rm = GetResourceManage();
+
+    switch (tabIndex)
+    {
+    case 0:
+    {
+        CreateWindow(L"BUTTON", L"查询", WS_VISIBLE | WS_CHILD,
+            600, 80, 120, 40, hWnd, (HMENU)IDC_BUTTON_QUERY, GetModuleHandle(NULL), NULL);
+
+
+        CreateWindow(L"STATIC", L"设备123", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 60, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 60, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"设备价格", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 100, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 100, 130, 25, hWnd, (HMENU)IDC_EDIT_PRICE, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"所属实验室ID", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 140, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 140, 130, 25, hWnd, (HMENU)IDC_EDIT_ROOM_ID, NULL, NULL);
+
+        CreateWindow(L"STATIC", L"购买时间", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 60, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindowEx(0, DATETIMEPICK_CLASS, NULL,
+            WS_BORDER | WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT,
+            400, 60, 130, 25, hWnd, (HMENU)IDC_DATEPICKER_DATE, GetModuleHandle(NULL), NULL);
+
+        HWND hListView = CreateWindowExW(0, WC_LISTVIEW, NULL,
+            WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_EDITLABELS,
+            30, 200, 280, 260, hWnd, (HMENU)IDC_LISTVIEW, GetModuleHandle(NULL), NULL);
+
+        break;
+    }
+    }
+}
+
+void CreateTabControlQuery(HWND hWnd)
+{
+    hMainTab = CreateWindow(WC_TABCONTROL, L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
+        20, 20, 750, 460, hWnd, (HMENU)IDC_TAB, GetModuleHandle(NULL), NULL);
+
+    TCITEM tie;
+    tie.mask = TCIF_TEXT;
+
+    wchar_t* tabNames[] = { L"设备", L"房间", L"实验员", L"类别" };
+    for (int i = 0; i < 4; i++)
+    {
+        tie.pszText = tabNames[i];
+        TabCtrl_InsertItem(hMainTab, i, &tie);
+    }
+
+    CreateButtonsQuery(hWnd, 0);
+}
+
+LRESULT CALLBACK QueryWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+    case WM_CREATE:
+        CreateTabControlQuery(hWnd);
+        break;
+
+    case WM_NOTIFY:
+        if (((LPNMHDR)lParam)->idFrom == IDC_TAB && ((LPNMHDR)lParam)->code == TCN_SELCHANGE)
+        {
+            int tabIndex = TabCtrl_GetCurSel(hMainTab);
+            CreateButtonsQuery(hWnd, tabIndex);
+        }
+        break;
+
+    case WM_COMMAND:
+    {
+        int tabIndex = TabCtrl_GetCurSel(hMainTab);
+        switch (LOWORD(wParam))
+        {
+        case WM_CLOSE:
+            DestroyWindow(hWnd);
+            break;
+
+        case WM_DESTROY:
+            hwndfuncQuery = NULL;
+            ShowWindow(hwndAdminManagement, SW_SHOW);
+            break;
+        }
+    }
+    }
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
 void ShowQueryWindow(HWND hWnd)
 {
+    WNDCLASS wc = { 0 };
+    wc.lpfnWndProc = QueryWndProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = L"QueryWindow";
 
+    RegisterClass(&wc);
+
+    hwndfuncQuery = CreateWindow(L"QueryWindow", L"信息查询",
+        WS_OVERLAPPED | WS_SYSMENU, 200, 100, 800, 600, hWnd, NULL, GetModuleHandle(NULL), NULL);
+
+    ShowWindow(hwndfuncQuery, SW_SHOW);
+    UpdateWindow(hwndfuncQuery);
 }

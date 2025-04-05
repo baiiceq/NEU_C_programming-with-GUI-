@@ -4,6 +4,7 @@
 
 #include <windows.h>
 
+
 #define IDC_USERNAME 101
 #define IDC_PASSWORD 102
 #define IDC_CONFIRM_PASSWORD 103

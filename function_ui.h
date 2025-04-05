@@ -6,7 +6,7 @@
 #include "lab_room.h"
 #include "account.h"
 
-#define IDC_TAB 1001
+#define IDC_TAB 2000
 #define IDC_BUTTON_ADD 2001
 #define IDC_BUTTON_DELETE 2002
 #define IDC_BUTTON_MODIFY 2003
@@ -22,15 +22,11 @@
 #define IDC_COMBOX_CATEGORY_CHANGE 2013
 #define IDC_EDIT_PASSWORD 2014
 #define IDC_EDIT_PASSWORD_CHANGE 2015
-#define IDC_CHECKBOX_1 2014
-#define IDC_CHECKBOX_2 2015
+#define IDC_CHECKBOX_1 2016
+#define IDC_CHECKBOX_2 2017
 #define IDC_STATIC_1 10001
-#define IDC_STATIC_2 10002
-#define IDC_STATIC_3 10003
-#define IDC_STATIC_4 10004
-#define IDC_STATIC_5 10005
-#define IDC_STATIC_6 10006
 #define IDC_LISTVIEW 100007
+#define IDC_BUTTON_EXIT 2018
 
 void ShowInfoManagementWindow(HWND hWnd);
 
