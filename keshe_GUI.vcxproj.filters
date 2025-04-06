@@ -13,6 +13,36 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\ui">
+      <UniqueIdentifier>{7ab9f2eb-44b8-4785-b0d6-441f1789c5b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\model">
+      <UniqueIdentifier>{1bafe408-ae41-4be5-9bc4-7d86d6488534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\manager">
+      <UniqueIdentifier>{2c6c89e5-7c2a-4b68-b96d-d165c2ffa458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\interface%28not GUI%29">
+      <UniqueIdentifier>{028038b8-6a03-4120-9555-460444231f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\operation">
+      <UniqueIdentifier>{9820812d-874e-47c1-a83f-35682016cd16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ui">
+      <UniqueIdentifier>{a8387128-6295-4dae-b15e-b92fa836cc46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\interface%28not GUI%29">
+      <UniqueIdentifier>{e1380705-1f5f-439f-a8b1-7283115137e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\model">
+      <UniqueIdentifier>{ee94d567-6f23-4bd2-96ae-e2c10258a22b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\manager">
+      <UniqueIdentifier>{f53a9696-d929-4522-8553-9af0ccde4774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\operation">
+      <UniqueIdentifier>{ef4a55dd-9392-4217-ad61-7504a5ebf87a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="keshe_GUI.rc">
@@ -25,106 +55,124 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="account.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="category.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="equipment_management.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="experimental_equipment.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="id_manager.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="info_operations.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="lab_room.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="linked_list.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="login_interface.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="management_interface.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="function_ui.c">
+      <Filter>源文件\ui</Filter>
     </ClCompile>
-    <ClCompile Include="register_interface.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="resource_manager.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="function_ui2.c">
+      <Filter>源文件\ui</Filter>
     </ClCompile>
     <ClCompile Include="main_ui.c">
-      <Filter>源文件</Filter>
+      <Filter>源文件\ui</Filter>
     </ClCompile>
-    <ClCompile Include="function_ui.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="login_interface.c">
+      <Filter>源文件\interface%28not GUI%29</Filter>
+    </ClCompile>
+    <ClCompile Include="info_operations.c">
+      <Filter>源文件\interface%28not GUI%29</Filter>
+    </ClCompile>
+    <ClCompile Include="register_interface.c">
+      <Filter>源文件\interface%28not GUI%29</Filter>
+    </ClCompile>
+    <ClCompile Include="management_interface.c">
+      <Filter>源文件\interface%28not GUI%29</Filter>
+    </ClCompile>
+    <ClCompile Include="account.c">
+      <Filter>源文件\model</Filter>
+    </ClCompile>
+    <ClCompile Include="category.c">
+      <Filter>源文件\model</Filter>
+    </ClCompile>
+    <ClCompile Include="experimental_equipment.c">
+      <Filter>源文件\model</Filter>
+    </ClCompile>
+    <ClCompile Include="lab_room.c">
+      <Filter>源文件\model</Filter>
+    </ClCompile>
+    <ClCompile Include="linked_list.c">
+      <Filter>源文件\model</Filter>
+    </ClCompile>
+    <ClCompile Include="id_manager.c">
+      <Filter>源文件\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="resource_manager.c">
+      <Filter>源文件\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="equipment_management.c">
+      <Filter>源文件\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="service.c">
+      <Filter>源文件\operation</Filter>
+    </ClCompile>
+    <ClCompile Include="systemmaintenance.c">
+      <Filter>源文件\operation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="account.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="configs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="equipment_management.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="experimental_equipment.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="id_manager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="info_operations.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="lab_room.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="linked_list.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="login_interface.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="management_interface.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="query.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="register_interface.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="resource_manager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sort.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="statistics.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="main_ui.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\ui</Filter>
     </ClInclude>
     <ClInclude Include="function_ui.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="function_ui2.h">
+      <Filter>头文件\ui</Filter>
     </ClInclude>
     <ClInclude Include="category.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\model</Filter>
+    </ClInclude>
+    <ClInclude Include="account.h">
+      <Filter>头文件\model</Filter>
+    </ClInclude>
+    <ClInclude Include="lab_room.h">
+      <Filter>头文件\model</Filter>
+    </ClInclude>
+    <ClInclude Include="linked_list.h">
+      <Filter>头文件\model</Filter>
+    </ClInclude>
+    <ClInclude Include="experimental_equipment.h">
+      <Filter>头文件\model</Filter>
+    </ClInclude>
+    <ClInclude Include="equipment_management.h">
+      <Filter>头文件\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="id_manager.h">
+      <Filter>头文件\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="resource_manager.h">
+      <Filter>头文件\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="info_operations.h">
+      <Filter>头文件\interface%28not GUI%29</Filter>
+    </ClInclude>
+    <ClInclude Include="management_interface.h">
+      <Filter>头文件\interface%28not GUI%29</Filter>
+    </ClInclude>
+    <ClInclude Include="register_interface.h">
+      <Filter>头文件\interface%28not GUI%29</Filter>
+    </ClInclude>
+    <ClInclude Include="login_interface.h">
+      <Filter>头文件\interface%28not GUI%29</Filter>
+    </ClInclude>
+    <ClInclude Include="query.h">
+      <Filter>头文件\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="sort.h">
+      <Filter>头文件\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="statistics.h">
+      <Filter>头文件\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="service.h">
+      <Filter>头文件\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="systemmaintenance.h">
+      <Filter>头文件\operation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -133,5 +181,7 @@
     <Text Include="current_id.txt" />
     <Text Include="equipment.txt" />
     <Text Include="laboratory.txt" />
+    <Text Include="service.txt" />
+    <Text Include="system_log.txt" />
   </ItemGroup>
 </Project>

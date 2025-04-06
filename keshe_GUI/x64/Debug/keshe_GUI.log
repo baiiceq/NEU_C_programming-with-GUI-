@@ -1,6 +1,20 @@
-﻿  account.c
-F:\m\code\keshe_GUI\account.c(114,12): warning C4013: “GetInputNumber”未定义；假设外部返回 int
-F:\m\code\keshe_GUI\account.c(267,32): warning C4133: “函数”: 从“Account *”到“ExperimentalEquipment *”的类型不兼容
+﻿  main_ui.c
+F:\m\code\keshe_GUI\function_ui2.h(20,1): warning C4005: “IDC_CONFIRM_PASSWORD”: 宏重定义
+  (编译源文件“main_ui.c”)
+  F:\m\code\keshe_GUI\main_ui.h(10,1):
+  参见“IDC_CONFIRM_PASSWORD”的前一个定义
+  
+F:\m\code\keshe_GUI\function_ui2.h(36,1): warning C4005: “IDC_BTN_CHANGE_USERNAME”: 宏重定义
+  (编译源文件“main_ui.c”)
+  F:\m\code\keshe_GUI\function_ui2.h(32,1):
+  参见“IDC_BTN_CHANGE_USERNAME”的前一个定义
+  
+F:\m\code\keshe_GUI\main_ui.c(154,21): warning C4047: “return”:“LRESULT”与“void *”的间接级别不同
+F:\m\code\keshe_GUI\main_ui.c(131,29): warning C4244: “初始化”: 从“LRESULT”转换到“int”，可能丢失数据
+F:\m\code\keshe_GUI\main_ui.c(249,13): warning C4013: “ShowServiceWindow”未定义；假设外部返回 int
+F:\m\code\keshe_GUI\main_ui.c(253,13): warning C4013: “ShowQueryWindow”未定义；假设外部返回 int
+F:\m\code\keshe_GUI\main_ui.c(257,13): warning C4013: “ShowSortWindow”未定义；假设外部返回 int
+F:\m\code\keshe_GUI\main_ui.c(261,13): warning C4013: “ShowStatisticsWindow”未定义；假设外部返回 int
   keshe_GUI.vcxproj -> F:\m\code\keshe_GUI\x64\Debug\keshe_GUI.exe
   'pwsh.exe' 不是内部或外部命令，也不是可运行的程序
   或批处理文件。

@@ -3,6 +3,7 @@ F:\m\code\keshe_GUI\category.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\category.
 F:\m\code\keshe_GUI\equipment_management.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\equipment_management.obj
 F:\m\code\keshe_GUI\experimental_equipment.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\experimental_equipment.obj
 F:\m\code\keshe_GUI\function_ui.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\function_ui.obj
+F:\m\code\keshe_GUI\function_ui2.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\function_ui2.obj
 F:\m\code\keshe_GUI\id_manager.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\id_manager.obj
 F:\m\code\keshe_GUI\info_operations.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\info_operations.obj
 F:\m\code\keshe_GUI\lab_room.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\lab_room.obj
@@ -13,3 +14,5 @@ F:\m\code\keshe_GUI\management_interface.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Deb
 F:\m\code\keshe_GUI\register_interface.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\register_interface.obj
 F:\m\code\keshe_GUI\resource_manager.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\resource_manager.obj
 F:\m\code\keshe_GUI\main_ui.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\main_ui.obj
+F:\m\code\keshe_GUI\service.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\service.obj
+F:\m\code\keshe_GUI\systemmaintenance.c;F:\m\code\keshe_GUI\keshe_GUI\x64\Debug\systemmaintenance.obj

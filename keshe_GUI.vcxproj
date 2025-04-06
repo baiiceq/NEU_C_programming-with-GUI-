@@ -149,6 +149,7 @@
     <ClCompile Include="register_interface.c" />
     <ClCompile Include="resource_manager.c" />
     <ClCompile Include="main_ui.c" />
+    <ClCompile Include="service.c" />
     <ClCompile Include="systemmaintenance.c" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +169,7 @@
     <ClInclude Include="query.h" />
     <ClInclude Include="register_interface.h" />
     <ClInclude Include="resource_manager.h" />
+    <ClInclude Include="service.h" />
     <ClInclude Include="sort.h" />
     <ClInclude Include="statistics.h" />
     <ClInclude Include="main_ui.h" />
@@ -179,6 +181,8 @@
     <Text Include="current_id.txt" />
     <Text Include="equipment.txt" />
     <Text Include="laboratory.txt" />
+    <Text Include="service.txt" />
+    <Text Include="system_log.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

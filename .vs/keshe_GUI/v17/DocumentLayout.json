@@ -1,0 +1,356 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\m\\code\\keshe_GUI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\main_ui.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:main_ui.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\function_ui2.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:function_ui2.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\function_ui.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:function_ui.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\account.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:account.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\function_ui2.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:function_ui2.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\systemmaintenance.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:systemmaintenance.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\service.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:service.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\function_ui.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:function_ui.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\category.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:category.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\main_ui.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:main_ui.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\systemmaintenance.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:systemmaintenance.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\laboratory.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:laboratory.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\statistics.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:statistics.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\query.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:query.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\service.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:service.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\id_manager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:id_manager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\experimental_equipment.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:experimental_equipment.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\sort.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:sort.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|F:\\m\\code\\keshe_GUI\\lab_room.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F4018CF7-7A8C-4A51-A39D-BC78068565A7}|keshe_GUI.vcxproj|solutionrelative:lab_room.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "service.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\service.c",
+              "RelativeDocumentMoniker": "service.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\service.c",
+              "RelativeToolTip": "service.c",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvxAAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-06T08:54:59.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "category.txt",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\category.txt",
+              "RelativeDocumentMoniker": "category.txt",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\category.txt",
+              "RelativeToolTip": "category.txt",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-04-06T08:55:43.793Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "function_ui2.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\function_ui2.h",
+              "RelativeDocumentMoniker": "function_ui2.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\function_ui2.h",
+              "RelativeToolTip": "function_ui2.h",
+              "ViewState": "AQIAADAAAAAAAAAAAAAAADUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-05T13:15:05.839Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "function_ui.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\function_ui.h",
+              "RelativeDocumentMoniker": "function_ui.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\function_ui.h",
+              "RelativeToolTip": "function_ui.h",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAYwBcAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-05T13:15:11.31Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main_ui.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\main_ui.c",
+              "RelativeDocumentMoniker": "main_ui.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\main_ui.c",
+              "RelativeToolTip": "main_ui.c",
+              "ViewState": "AQIAAJsBAAAAAAAAAAAUwKQBAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-04T14:12:40.575Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "function_ui.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\function_ui.c",
+              "RelativeDocumentMoniker": "function_ui.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\function_ui.c",
+              "RelativeToolTip": "function_ui.c",
+              "ViewState": "AQIAAMMBAAAAAAAAAAAAAEkAAAA9AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-04T12:31:46.906Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "main.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\main.c",
+              "RelativeDocumentMoniker": "main.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\main.c",
+              "RelativeToolTip": "main.c",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-05T07:10:12.499Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "service.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\service.h",
+              "RelativeDocumentMoniker": "service.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\service.h",
+              "RelativeToolTip": "service.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-06T09:24:42.295Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "account.txt",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\account.txt",
+              "RelativeDocumentMoniker": "account.txt",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\account.txt",
+              "RelativeToolTip": "account.txt",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-04-06T08:55:45.413Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "systemmaintenance.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\systemmaintenance.h",
+              "RelativeDocumentMoniker": "systemmaintenance.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\systemmaintenance.h",
+              "RelativeToolTip": "systemmaintenance.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-06T05:31:34.71Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "function_ui2.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\function_ui2.c",
+              "RelativeDocumentMoniker": "function_ui2.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\function_ui2.c",
+              "RelativeToolTip": "function_ui2.c",
+              "ViewState": "AQIAAH0CAAAAAAAAAAAAANMCAABaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-06T05:31:38.635Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "main_ui.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\main_ui.h",
+              "RelativeDocumentMoniker": "main_ui.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\main_ui.h",
+              "RelativeToolTip": "main_ui.h",
+              "ViewState": "AQIAAAkAAAAAAAAAAADwvxwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-06T05:21:49.131Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "query.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\query.h",
+              "RelativeDocumentMoniker": "query.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\query.h",
+              "RelativeToolTip": "query.h",
+              "ViewState": "AQIAAJECAAAAAAAAAAAswA8DAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-04T12:17:06.467Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "systemmaintenance.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\systemmaintenance.c",
+              "RelativeDocumentMoniker": "systemmaintenance.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\systemmaintenance.c",
+              "RelativeToolTip": "systemmaintenance.c",
+              "ViewState": "AQIAAL0AAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-06T05:31:19.906Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "laboratory.txt",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\laboratory.txt",
+              "RelativeDocumentMoniker": "laboratory.txt",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\laboratory.txt",
+              "RelativeToolTip": "laboratory.txt",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-04-06T09:20:26.975Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "statistics.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\statistics.h",
+              "RelativeDocumentMoniker": "statistics.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\statistics.h",
+              "RelativeToolTip": "statistics.h",
+              "ViewState": "AQIAAJ4EAAAAAAAAAAAAALIEAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-06T05:29:08.156Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "experimental_equipment.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\experimental_equipment.c",
+              "RelativeDocumentMoniker": "experimental_equipment.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\experimental_equipment.c",
+              "RelativeToolTip": "experimental_equipment.c",
+              "ViewState": "AQIAAEABAAAAAAAAAAAmwFUBAABUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-05T13:17:15.017Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "id_manager.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\id_manager.h",
+              "RelativeDocumentMoniker": "id_manager.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\id_manager.h",
+              "RelativeToolTip": "id_manager.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-06T05:46:20.167Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "sort.h",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\sort.h",
+              "RelativeDocumentMoniker": "sort.h",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\sort.h",
+              "RelativeToolTip": "sort.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAABQwAMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-05T14:08:52.909Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "lab_room.c",
+              "DocumentMoniker": "F:\\m\\code\\keshe_GUI\\lab_room.c",
+              "RelativeDocumentMoniker": "lab_room.c",
+              "ToolTip": "F:\\m\\code\\keshe_GUI\\lab_room.c",
+              "RelativeToolTip": "lab_room.c",
+              "ViewState": "AQIAACcAAAAAAAAAAADwvzUAAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-05T07:05:49.402Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
