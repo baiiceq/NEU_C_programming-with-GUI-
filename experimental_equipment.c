@@ -4,6 +4,31 @@
 #include <CommCtrl.h>
 
 
+void state_to_string(EquipmentState state, wchar_t* string)
+{
+    switch (state)
+    {
+    case Using:
+        wcscpy_s(string, 16, L"正在使用");
+        break;
+    case Idle:
+        wcscpy_s(string, 16, L"空闲");
+        break;
+    case Lost:
+        wcscpy_s(string, 16, L"遗失");
+        break;
+    case Damaged:
+        wcscpy_s(string, 16, L"损坏");
+        break;
+    case Scrapped:
+        wcscpy_s(string, 16, L"报废");
+        break;
+    case Repairing:
+        wcscpy_s(string, 16, L"维修中");
+        break;
+    }
+}
+
 ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* name, int room_id, int price, wchar_t* purchase_date)
 {
     ExperimentalEquipment* ee = (ExperimentalEquipment*)malloc(sizeof(ExperimentalEquipment));
@@ -20,6 +45,7 @@ ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* 
     ee->price = price;
     ee->room_id = room_id;
     wcscpy_s(ee->purchase_date, DATE_LENGTH, purchase_date);
+    ee->state = Idle;
     return ee;
 
 }
@@ -289,6 +315,14 @@ void _ChangeExperimentalEquipment(HWND hWnd)
             ChangeExperimentalCategory(change_ee, category);
         }
 
+        hCheckBox = GetDlgItem(hWnd, IDC_CHECKBOX_STATE);
+        if (SendMessage(hCheckBox, BM_GETCHECK, 0, 0) == BST_CHECKED)
+        {
+            HWND hComboBox = GetDlgItem(hWnd, IDC_COMBOX_STATE);
+            int index = SendMessage(hComboBox, CB_GETCURSEL, 0, 0);
+            change_ee->state = (EquipmentState)index;
+        }
+
         wchar_t idBuffer[16];
         swprintf_s(idBuffer, 16, L"%d", change_ee->id);
         ListView_SetItemText(hListView, selectedIndex, 0, idBuffer);
@@ -306,6 +340,10 @@ void _ChangeExperimentalEquipment(HWND hWnd)
         ListView_SetItemText(hListView, selectedIndex, 4, priceBuffer);
 
         ListView_SetItemText(hListView, selectedIndex, 5, change_ee->purchase_date);
+
+        wchar_t stateBuffer[16];
+        state_to_string(change_ee->state, stateBuffer);
+        ListView_SetItemText(hListView, selectedIndex, 6, stateBuffer);
         MessageBox(hWnd, L"设备已修改", L"修改", MB_OK);
     }
     else

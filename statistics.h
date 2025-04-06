@@ -7,6 +7,7 @@
 #include "string.h"
 #include <math.h>
 
+extern HWND hwndAdminManagement;
 
     // 统计功能ID定义
 #define ID_BTN_STATISTICS 1010
@@ -1147,6 +1148,7 @@ LRESULT CALLBACK StatisticsMainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
             DestroyWindow(hwndEquipmentStats);
             DestroyWindow(hwndAccountStats);
             DestroyWindow(hwndStatisticsMain);
+            ShowWindow(hwndAdminManagement, SW_SHOW);
             break;
         }
         break;
@@ -1156,6 +1158,7 @@ LRESULT CALLBACK StatisticsMainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
         DestroyWindow(hwndEquipmentStats);
         DestroyWindow(hwndAccountStats);
         DestroyWindow(hwndStatisticsMain);
+        ShowWindow(hwndAdminManagement, SW_SHOW);
         break;
 
     case WM_DESTROY:

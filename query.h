@@ -24,6 +24,9 @@
 #define IDC_BUTTON_EXIT 3012
 #define IDC_CHECKBOX_DATE 3013
 #define IDC_CHECKBOX_CATEGORY 3014
+#define IDC_CHECKBOX_STATE 3015
+#define IDC_COMBOX_STATE 3016
+
 
 extern HWND hwndAdminManagement;
 
@@ -62,7 +65,7 @@ void Query(LinkedList* list, QueryCondition condition, void* param, void (*Print
 }
 
 // 用于GUI界面的查询函数
-void _Query(LinkedList* list, QueryCondition condition, void* param, void (*AddListView)(HWND,void*), HWND hWnd)
+void _Query(LinkedList* list, QueryCondition condition, void* param, void (*AddListView)(HWND, void*, int), HWND hWnd)
 {
     Node* node = list->head;
 
@@ -71,7 +74,7 @@ void _Query(LinkedList* list, QueryCondition condition, void* param, void (*AddL
         node = node->next;
         if (condition(node->data, param))
         {
-            AddListView(hWnd, node->data);
+            AddListView(hWnd, node->data, IDC_LISTVIEW);
         }
     }
 }
@@ -86,6 +89,7 @@ typedef struct _EquipmentQuery
     int max_price;                        // 最大价格
     wchar_t name[EQUIPMENT_LENGTH];       // 名字
     int room_id;                          // 所属房间
+    EquipmentState state;
 
 } EquipmentQuery;
 
@@ -118,6 +122,9 @@ bool QueryEquipmenCondition(void* data, void* param)
     if (query->room_id != -1 && eq->room_id != query->room_id)
         return False;
     
+    // 判断状态
+    if (query->state != None && eq->state != query->state)
+        return False;
 
     return True;  // 所有条件都符合
 }
@@ -129,11 +136,11 @@ void PrintEquipment(void* data)
         eq->id, eq->name, eq->category->name, eq->price, eq->room_id);
 }
 
-void AddEquiment(HWND hWnd, void* data)
+void AddEquiment(HWND hWnd, void* data, int idc)
 {
     ExperimentalEquipment* ee = (ExperimentalEquipment*)data;
 
-    HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+    HWND hListView = GetDlgItem(hWnd, idc);
     int index = ListView_GetItemCount(hListView);
 
     LVITEM lvItem;
@@ -158,7 +165,12 @@ void AddEquiment(HWND hWnd, void* data)
     swprintf_s(priceBuffer, 16, L"%d", ee->price);
     ListView_SetItemText(hListView, index, 4, priceBuffer);
 
-    ListView_SetItemText(hListView, index, 5, ee->purchase_date)
+    ListView_SetItemText(hListView, index, 5, ee->purchase_date);
+
+    wchar_t stateBuffer[16];
+    state_to_string(ee->state, stateBuffer);
+    ListView_SetItemText(hListView, index, 6, stateBuffer);
+
 }
 
 void _QueryEquipment(HWND hWnd)
@@ -169,6 +181,7 @@ void _QueryEquipment(HWND hWnd)
     query.max_price = -1;
     query.min_price = -1;
     query.category_id = -1; 
+    query.state = None;
     wcscpy_s(query.min_date, DATE_LENGTH, L"");
     wcscpy_s(query.max_date, DATE_LENGTH, L"");
     wcscpy_s(query.name, EQUIPMENT_LENGTH, L"");
@@ -216,11 +229,20 @@ void _QueryEquipment(HWND hWnd)
         Category* category = LinkedList_at(GetResourceManage()->category_list, index);
         query.category_id = category->id;
     }
+
+    hCheckBox = GetDlgItem(hWnd, IDC_CHECKBOX_STATE);
+    if (SendMessage(hCheckBox, BM_GETCHECK, 0, 0) == BST_CHECKED)
+    {
+        HWND hComboBox = GetDlgItem(hWnd, IDC_COMBOX_STATE);
+        int index = SendMessage(hComboBox, CB_GETCURSEL, 0, 0);
+        query.state = (EquipmentState)index;
+    }
+
     HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
     ListView_DeleteAllItems(hListView);
 
     LinkedList* list = GetResourceManage()->equipment_list;
-    _Query(list, QueryEquipmenCondition, &query, AddEquiment,hWnd);
+    _Query(list, QueryEquipmenCondition, &query, AddEquiment, hWnd);
 
     MessageBox(hWnd, L"查询成功", L"提示", MB_OK);
 }
@@ -365,11 +387,11 @@ void PrintAccount(void* data)
         account->id, type, account->user_name, account->roomid);
 }
 
-void AddAccount(HWND hWnd, void* data)
+void AddAccount(HWND hWnd, void* data, int idc)
 {
     Account* account = (Account*)data;
 
-    HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+    HWND hListView = GetDlgItem(hWnd, idc);
     int index = ListView_GetItemCount(hListView);
 
     LVITEM lvItem;
@@ -551,11 +573,11 @@ void PrintLabroom(void* data)
         Labroom->id, Labroom->name);
 }
 
-void AddLabroom(HWND hWnd, void* data)
+void AddLabroom(HWND hWnd, void* data, int idc)
 {
     LabRoom* labroom = (LabRoom*)data;
 
-    HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+    HWND hListView = GetDlgItem(hWnd, idc);
     int index = ListView_GetItemCount(hListView);
 
     LVITEM lvItem;
@@ -666,11 +688,11 @@ void PrintCategory(void* data)
         category->id, category->name,category->disposal_years);
 }
 
-void Addcategory(HWND hWnd, void* data)
+void Addcategory(HWND hWnd, void* data, int idc)
 {
     Category* category = (Category*)data;
 
-    HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+    HWND hListView = GetDlgItem(hWnd, idc);
     int index = ListView_GetItemCount(hListView);
 
     LVITEM lvItem;
@@ -769,6 +791,9 @@ void CreateButtonsQuery(HWND hWnd, int tabIndex)
             DestroyWindow(h);
     }
 
+    CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
+        600, 495, 120, 40, hWnd, (HMENU)IDC_BUTTON_EXIT, GetModuleHandle(NULL), NULL);
+
     ResourceManager* rm = GetResourceManage();
 
     switch (tabIndex)
@@ -779,40 +804,40 @@ void CreateButtonsQuery(HWND hWnd, int tabIndex)
             50, 425, 120, 40, hWnd, (HMENU)IDC_BUTTON_QUERY, GetModuleHandle(NULL), NULL);
 
          
-        CreateWindow(L"STATIC", L"设备名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 60, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
-        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 60, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME, NULL, NULL);
+        CreateWindow(L"STATIC", L"设备名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 55, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 55, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"设备最低价格", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 100, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
-        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 100, 130, 25, hWnd, (HMENU)IDC_EDIT_MIN_PRICE, NULL, NULL);
+        CreateWindow(L"STATIC", L"设备最低价格", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 90, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 90, 130, 25, hWnd, (HMENU)IDC_EDIT_MIN_PRICE, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"设备最高价格", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 140, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
-        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 140, 130, 25, hWnd, (HMENU)IDC_EDIT_MAX_PRICE, NULL, NULL);
+        CreateWindow(L"STATIC", L"设备最高价格", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 125, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 125, 130, 25, hWnd, (HMENU)IDC_EDIT_MAX_PRICE, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"所属实验室ID", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 180, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
-        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 180, 130, 25, hWnd, (HMENU)IDC_EDIT_ROOM_ID, NULL, NULL);
+        CreateWindow(L"STATIC", L"所属实验室ID", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 160, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 160, 130, 25, hWnd, (HMENU)IDC_EDIT_ROOM_ID, NULL, NULL);
 
         CreateWindowEx(0, L"BUTTON", L"是否选择时间条件查询",
             WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-            60, 220, 200, 30, hWnd, (HMENU)IDC_CHECKBOX_DATE, GetModuleHandle(NULL), NULL);
+            60, 195, 200, 30, hWnd, (HMENU)IDC_CHECKBOX_DATE, GetModuleHandle(NULL), NULL);
 
-        CreateWindow(L"STATIC", L"最早购买时间", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 260, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        CreateWindow(L"STATIC", L"最早购买时间", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 230, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
         CreateWindowEx(0, DATETIMEPICK_CLASS, NULL,
             WS_BORDER | WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT,
-            160, 260, 130, 25, hWnd, (HMENU)IDC_MIN_DATE, GetModuleHandle(NULL), NULL);
+            160, 230, 130, 25, hWnd, (HMENU)IDC_MIN_DATE, GetModuleHandle(NULL), NULL);
 
-        CreateWindow(L"STATIC", L"最晚购买时间", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 300, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        CreateWindow(L"STATIC", L"最晚购买时间", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 265, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
         CreateWindowEx(0, DATETIMEPICK_CLASS, NULL,
             WS_BORDER | WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT,
-            160, 300, 130, 25, hWnd, (HMENU)IDC_MAX_DATE, GetModuleHandle(NULL), NULL);
+            160, 265, 130, 25, hWnd, (HMENU)IDC_MAX_DATE, GetModuleHandle(NULL), NULL);
 
         CreateWindowEx(0, L"BUTTON", L"是否选择种类条件查询",
             WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-            60, 340, 200, 30, hWnd, (HMENU)IDC_CHECKBOX_CATEGORY, GetModuleHandle(NULL), NULL);
+            60, 300, 200, 30, hWnd, (HMENU)IDC_CHECKBOX_CATEGORY, GetModuleHandle(NULL), NULL);
 
-        CreateWindow(L"STATIC", L"设备种类", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 380, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        CreateWindow(L"STATIC", L"设备种类", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 335, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
         HWND hComboBox = CreateWindow(L"COMBOBOX", NULL,
             WS_VISIBLE | WS_CHILD | CBS_DROPDOWN | WS_BORDER,
-            160, 380, 130, 300, hWnd, (HMENU)IDC_COMBOX_CATEGORY, GetModuleHandle(NULL), NULL);
+            160, 335, 130, 300, hWnd, (HMENU)IDC_COMBOX_CATEGORY, GetModuleHandle(NULL), NULL);
 
         Node* temp = rm->category_list->head;
         size_t count = rm->category_list->size;
@@ -824,6 +849,24 @@ void CreateButtonsQuery(HWND hWnd, int tabIndex)
             swprintf(buffer, 50, L"%d. %s", (int)(i + 1), category->name);
             SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
         }
+
+        CreateWindowEx(0, L"BUTTON", L"是否选择状态条件查询",
+            WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            60, 360, 200, 30, hWnd, (HMENU)IDC_CHECKBOX_STATE, GetModuleHandle(NULL), NULL);
+
+        CreateWindow(L"STATIC", L"设备状态", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 395, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
+        hComboBox = CreateWindow(L"COMBOBOX", NULL,
+            WS_VISIBLE | WS_CHILD | CBS_DROPDOWN | WS_BORDER,
+            160, 395, 130, 300, hWnd, (HMENU)IDC_COMBOX_STATE, GetModuleHandle(NULL), NULL);
+
+        for (int i = 0; i < 6; i++)
+        {
+            wchar_t buffer[16];
+            state_to_string((EquipmentState)i, buffer);
+            SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
+        }
+        SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+
 
         CreateWindow(L"STATIC", L"查询结果", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 490, 50, 100, 25, hWnd, (HMENU)IDC_STATIC, NULL, NULL);
 
@@ -865,6 +908,11 @@ void CreateButtonsQuery(HWND hWnd, int tabIndex)
         lvc.cx = 80;
         lvc.iSubItem = 5;
         ListView_InsertColumn(hListView, 5, &lvc);
+
+        lvc.pszText = L"状态";
+        lvc.cx = 80;
+        lvc.iSubItem = 6;
+        ListView_InsertColumn(hListView, 6, &lvc);
 
         break;
     }
@@ -1062,6 +1110,11 @@ LRESULT CALLBACK QueryWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             default:
                 break;
             }
+            break;
+        case IDC_BUTTON_EXIT:
+            ShowWindow(hwndfuncQuery, SW_HIDE);
+            hwndfuncQuery = NULL;
+            ShowWindow(hwndAdminManagement, SW_SHOW);
             break;
         }
     }
