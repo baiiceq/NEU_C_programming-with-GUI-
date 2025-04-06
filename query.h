@@ -785,7 +785,7 @@ void CreateButtonsQuery(HWND hWnd, int tabIndex)
 {
     HWND h;
     int idc = IDC_EDIT_NAME;
-    for (int i = idc; i <= 3014; i++)
+    for (int i = idc; i <= 3016; i++)
     {
         while ((h = GetDlgItem(hWnd, i)) != NULL)
             DestroyWindow(h);

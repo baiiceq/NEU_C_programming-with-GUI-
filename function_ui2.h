@@ -51,6 +51,7 @@ LRESULT CALLBACK RestoreDataWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 
 // 显示系统维护窗口
 void ShowSystemMaintenanceWindow(HWND hWnd);
+void ShowUserMaintenanceWindow(HWND hWnd);
 
 // 显示密码维护窗口
 void ShowPasswordMaintenanceWindow(HWND hWnd);

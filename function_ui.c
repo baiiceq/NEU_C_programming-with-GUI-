@@ -67,6 +67,14 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         DestroyWindow(hEdit);
     while ((hEdit = GetDlgItem(hWnd, IDC_BUTTON_EXIT)) != NULL)
         DestroyWindow(hEdit);
+    while ((hEdit = GetDlgItem(hWnd, IDC_CHECKBOX_STATE)) != NULL)
+        DestroyWindow(hEdit);
+    while ((hEdit = GetDlgItem(hWnd, IDC_COMBOX_STATE)) != NULL)
+        DestroyWindow(hEdit);
+    while ((hEdit = GetDlgItem(hWnd, IDC_EDIT_PASSWORD_CHANGE)) != NULL)
+        DestroyWindow(hEdit);
+    while ((hEdit = GetDlgItem(hWnd, IDC_EDIT_PASSWORD)) != NULL)
+        DestroyWindow(hEdit); 
 
     CreateWindow(L"BUTTON", L"·µ»Ø", WS_VISIBLE | WS_CHILD,
         600, 495, 120, 40, hWnd, (HMENU)IDC_BUTTON_EXIT, GetModuleHandle(NULL), NULL);

@@ -26,4 +26,6 @@
 void ShowLoginWindow(HWND hWnd);
 void ShowRegisterWindow(HWND hWnd);
 void ShowAdminManagementWindow(HWND hWnd);
+void ShowExperimenterManagementWindow(HWND hWnd);
+void ShowUserManagementWindow(HWND hWnd);
 #endif // UI_H
