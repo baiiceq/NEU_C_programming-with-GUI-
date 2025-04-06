@@ -32,8 +32,10 @@
 #define IDC_BTN_CHANGE_USERNAME     1401
 //数据恢复窗口ID
 #define IDC_RESTORE_TIME                1402
-
-
+//一般用户系统维护窗口ID
+#define IDC_BTN_CHANGE_USERNAME 101
+#define IDC_BTN_CHANGE_PASSWORD 102
+#define IDC_BTN_SYSTEM_MAINT 103
 
 // 系统维护窗口过程函数
 LRESULT CALLBACK SystemMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

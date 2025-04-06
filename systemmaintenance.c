@@ -127,10 +127,10 @@ bool LogSystemOperation(const char* operation, int userId)
     time[24] = '\0'; //ctime函数会自动补换行符，所以这里移除换行符
 
     Account* account = FindById(userId);
-    const char* username = account ? account->user_name : "未知用户";
-
+    char lusername[USER_NMAE_LENGTH] ="";
+	wcstombs_s(NULL, lusername, USER_NMAE_LENGTH, account->user_name, _TRUNCATE);
     fprintf(fp, "[%s] 用户: %s (ID: %d) 操作: %s\n",
-        time, username, userId, operation);
+        time, lusername, userId, operation);
 
     fclose(fp);
     return true;

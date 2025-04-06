@@ -114,7 +114,7 @@ LRESULT CALLBACK SystemMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LP
 
 	case WM_DESTROY:
 		hwndSystemMaintenance = NULL;
-		//ShowWindow(hwndAdminManagement, SW_SHOW);
+		ShowWindow(hwndAdminManagement, SW_SHOW);
 		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -186,13 +186,13 @@ LRESULT CALLBACK PasswordMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, 
 			switch (em->current_account->account_type)
 			{
 			case Admin:
-				strcpy_s(operation, 20, L"修改管理员密码");
+				strcpy_s(operation, 20, "修改管理员密码");
 				break;
 			case User:
-				strcpy_s(operation, 20, L"修改一般用户密码");
+				strcpy_s(operation, 20, "修改一般用户密码");
 				break;
 			case Experimenter:
-				strcpy_s(operation, 20, L"修改实验员密码");
+				strcpy_s(operation, 20, "修改实验员密码");
 				break;
 			}
 			LogSystemOperation(operation, em->current_account->id);
@@ -357,7 +357,11 @@ LRESULT CALLBACK ChangeUsernameWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 				MessageBox(hWnd, L"请输入新用户名！", L"提示", MB_OK | MB_ICONINFORMATION);
 				break;
 			}
-
+			if (!IsValidUsername(newUsername))
+			{
+				MessageBox(hWnd, L"用户名不符合规则！", L"错误", MB_OK | MB_ICONERROR);
+				break;
+			}
 			wcscpy_s(em->current_account->user_name, USER_NMAE_LENGTH, newUsername);
 			MessageBox(hWnd, L"用户名修改成功！", L"提示", MB_OK | MB_ICONINFORMATION);
 			DestroyWindow(hWnd);
@@ -645,8 +649,6 @@ void ShowRestoreDataWindow(HWND hWnd)
 	ShowWindow(hwndRestoreData, SW_SHOW);
 	UpdateWindow(hwndRestoreData);
 }
-
-
 // 填充用户列表
 void FillUserList(HWND hListView)
 {
@@ -719,5 +721,127 @@ bool ResetUserPassword(int userId, const wchar_t* newPassword)
 	return True;
 }
 
+LRESULT CALLBACK UserMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	static HWND hCurrentUsername, hNewUsername, hCurrentPassword, hNewPassword, hConfirmPassword;
 
+	switch (msg)
+	{
+	case WM_CREATE:
+		// 显示当前用户名
+		CreateWindow(L"STATIC", L"当前用户名:", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 50, 30, 100, 25, hWnd, NULL, NULL, NULL);
+		hCurrentUsername = CreateWindow(L"STATIC", em->current_account->user_name, WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 160, 30, 180, 25, hWnd, NULL, NULL, NULL);
 
+		// 修改用户名
+		CreateWindow(L"STATIC", L"新用户名:", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 50, 70, 100, 25, hWnd, NULL, NULL, NULL);
+		hNewUsername = CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 70, 180, 25, hWnd, NULL, NULL, NULL);
+
+		// 修改用户名按钮
+		CreateWindow(L"BUTTON", L"修改用户名", WS_VISIBLE | WS_CHILD, 160, 110, 120, 30, hWnd, (HMENU)IDC_BTN_CHANGE_USERNAME, NULL, NULL);
+
+		// 修改密码
+		CreateWindow(L"STATIC", L"当前密码:", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 50, 150, 100, 25, hWnd, NULL, NULL, NULL);
+		hCurrentPassword = CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 160, 150, 180, 25, hWnd, NULL, NULL, NULL);
+
+		CreateWindow(L"STATIC", L"新密码:", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 50, 190, 100, 25, hWnd, NULL, NULL, NULL);
+		hNewPassword = CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 160, 190, 180, 25, hWnd, NULL, NULL, NULL);
+
+		CreateWindow(L"STATIC", L"确认新密码:", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 50, 230, 100, 25, hWnd, NULL, NULL, NULL);
+		hConfirmPassword = CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 160, 230, 180, 25, hWnd, NULL, NULL, NULL);
+
+		// 修改密码按钮
+		CreateWindow(L"BUTTON", L"修改密码", WS_VISIBLE | WS_CHILD, 160, 270, 120, 30, hWnd, (HMENU)IDC_BTN_CHANGE_PASSWORD, NULL, NULL);
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_BTN_CHANGE_USERNAME:
+		{
+			wchar_t newUsername[50];
+			GetWindowText(hNewUsername, newUsername, 50);
+
+			if (wcslen(newUsername) == 0)
+			{
+				MessageBox(hWnd, L"请输入新用户名！", L"提示", MB_OK | MB_ICONINFORMATION);
+				break;
+			}
+			if (!IsValidUsername(newUsername))
+			{
+				MessageBox(hWnd, L"用户名不符合规则！", L"错误", MB_OK | MB_ICONERROR);
+				break;
+			}
+			wcscpy_s(em->current_account->user_name, USER_NMAE_LENGTH, newUsername);
+			MessageBox(hWnd, L"用户名修改成功！", L"提示", MB_OK | MB_ICONINFORMATION);
+			break;
+		}
+		case IDC_BTN_CHANGE_PASSWORD:
+		{
+			wchar_t oldPassword[50], newPassword[50], confirmPassword[50];
+			GetWindowText(hCurrentPassword, oldPassword, 50);
+			GetWindowText(hNewPassword, newPassword, 50);
+			GetWindowText(hConfirmPassword, confirmPassword, 50);
+			Account testaccount;
+			wcscpy_s(testaccount.user_name, USER_NMAE_LENGTH, em->current_account->user_name);
+			wcscpy_s(testaccount.user_password, USER_PASSWORD_LENGTH, oldPassword);
+
+			if (!IsCorrectAccount(&testaccount)) {
+				MessageBox(NULL, L"原密码不正确！", L"错误", MB_OK | MB_ICONERROR);
+				return False;
+			}
+			if (!IsValidPassword(newPassword)) {
+				MessageBox(NULL, L"密码不符合规则！", L"错误", MB_OK | MB_ICONERROR);
+				return False;
+			}
+			if (wcscmp(newPassword, confirmPassword) != 0) {
+				MessageBox(NULL, L"两次输入的密码不一致", L"错误", MB_OK | MB_ICONERROR);
+				return False;
+			}
+
+			wcscpy_s(em->current_account->user_password, USER_PASSWORD_LENGTH, newPassword);
+			MessageBox(NULL, L"密码修改成功", L"提示", MB_OK);
+
+			char operation[20];
+			switch (em->current_account->account_type)
+			{
+			case Admin:
+				strcpy_s(operation, 20, "修改管理员密码");
+				break;
+			case User:
+				strcpy_s(operation, 20, "修改一般用户密码");
+				break;
+			case Experimenter:
+				strcpy_s(operation, 20, "修改实验员密码");
+				break;
+			}
+			LogSystemOperation(operation, em->current_account->id);
+			break;
+		}
+		}
+		break;
+
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		break;
+
+	case WM_DESTROY:
+		//ShowUserWindow
+		break;
+	}
+	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void ShowUserMaintenanceWindow(HWND hWnd)
+{
+	WNDCLASS wc = { 0 };
+	wc.lpfnWndProc = UserMaintenanceWndProc;
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.lpszClassName = L"UserMaintenanceWindow";
+
+	RegisterClass(&wc);
+
+	HWND hwndUserMaintenance = CreateWindow(L"UserMaintenanceWindow", L"系统维护", WS_OVERLAPPED | WS_SYSMENU,
+		400, 200, 400, 350, hWnd, NULL, GetModuleHandle(NULL), NULL);
+
+	ShowWindow(hwndUserMaintenance, SW_SHOW);
+	UpdateWindow(hwndUserMaintenance);
+}

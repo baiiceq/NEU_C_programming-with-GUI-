@@ -277,39 +277,6 @@ LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-
-void ShowLoginWindow(HWND hWnd)
-{
-    WNDCLASS wc = { 0 };
-    wc.lpfnWndProc = LoginWndProc;
-    wc.hInstance = GetModuleHandle(NULL);
-    wc.lpszClassName = L"LoginWindow";
-
-    RegisterClass(&wc);
-
-    hwndLogin = CreateWindow(L"LoginWindow", L"µÇÂ¼", WS_OVERLAPPED | WS_SYSMENU,
-        400, 300, 400, 300, hWnd, NULL, GetModuleHandle(NULL), NULL);
-
-    ShowWindow(hwndLogin, SW_SHOW);
-    UpdateWindow(hwndLogin);
-}
-
-void ShowRegisterWindow(HWND hWnd)
-{
-    WNDCLASS wc = { 0 };
-    wc.lpfnWndProc = RegisterWndProc;
-    wc.hInstance = GetModuleHandle(NULL);
-    wc.lpszClassName = L"RegisterWindow";
-
-    RegisterClass(&wc);
-
-    hwndRegister = CreateWindow(L"RegisterWindow", L"×¢²á", WS_OVERLAPPED | WS_SYSMENU,
-        400, 300, 400, 300, hWnd, NULL, GetModuleHandle(NULL), NULL);
-
-    ShowWindow(hwndRegister, SW_SHOW);
-    UpdateWindow(hwndRegister);
-}
-
 void ShowAdminManagementWindow(HWND hWnd)
 {
     WNDCLASS wc = { 0 };
@@ -325,4 +292,3 @@ void ShowAdminManagementWindow(HWND hWnd)
     ShowWindow(hwndAdminManagement, SW_SHOW);
     UpdateWindow(hwndAdminManagement);
 }
-
