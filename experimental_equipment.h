@@ -14,7 +14,7 @@ typedef enum _EquipmentState
 	Idle,      // ¿ÕÏĞ
 	Lost,      // ÒÅÊ§
 	Damaged,   // Ëğ»µ£¨Î´ÔÚÎ¬ĞŞ£©
-	Scrapped,  // ±¨·Ï£¨×¼±¸É¾³ı£¿£©
+	Scrapped,  // ±¨·Ï
 	Repairing  // ÕıÔÚÎ¬ĞŞ
 }EquipmentState;
 
@@ -46,7 +46,7 @@ bool ChangeRoom_id(ExperimentalEquipment* eq, int newroomid);
 bool ChangePurchaseDate(ExperimentalEquipment* eq, wchar_t* newdate);
 bool ChangeExperimentalCategory(ExperimentalEquipment* eq, Category* newcategory);
 
-LinkedList* EFindByName(LinkedList* eqlist, char* name);
+LinkedList* EFindByName(LinkedList* eqlist, wchar_t* name);
 LinkedList* EFindById(LinkedList* eqlist, int id);
 LinkedList* EFindByRoom_id(LinkedList* eqlist, int roomid);
 LinkedList* EFindByCategory(LinkedList* eqlist, int categoryid);

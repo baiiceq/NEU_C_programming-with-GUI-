@@ -875,24 +875,20 @@ LRESULT CALLBACK EquipmentStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
     {
     case WM_CREATE:
     {
-        // 创建标题
         CreateWindow(L"STATIC", L"设备统计", WS_VISIBLE | WS_CHILD | SS_CENTER,
             300, 10, 200, 30, hWnd, NULL, NULL, NULL);
 
-        // 创建按设备类型统计选项
-        hCheckByCategory = CreateWindow(L"BUTTON", L"按设备类型统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+        hCheckByCategory = CreateWindow(L"BUTTON", L"按设备种类统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
             70, 60, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_CATEGORY, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"设备类型:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
+        CreateWindow(L"STATIC", L"设备种类:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
             220, 60, 80, 25, hWnd, NULL, NULL, NULL);
 
         hCategoryCombo = CreateWindow(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL,
             310, 60, 120, 200, hWnd, (HMENU)IDC_CATEGORY_COMBO, NULL, NULL);
 
-        // 填充设备类型下拉框
         FillCategoryComboBox(hCategoryCombo);
 
-        // 创建按实验室统计选项
         hCheckByLabroom = CreateWindow(L"BUTTON", L"按实验室统计", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
             70, 100, 150, 25, hWnd, (HMENU)IDC_CHECK_BY_LABROOM, NULL, NULL);
 

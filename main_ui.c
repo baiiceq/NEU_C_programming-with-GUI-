@@ -185,8 +185,8 @@ LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         CreateWindow(L"BUTTON", L"基本信息管理", WS_VISIBLE | WS_CHILD, 90, 120, 120, 40, hWnd, (HMENU)ID_BTN_INFO_MANAGE, NULL, NULL);
         CreateWindow(L"STATIC", L"对实验中心的房间、实验员、设备类别、设备的基本信息进行管理", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 120, 480, 40, hWnd, NULL, NULL, NULL);
 
-        CreateWindow(L"BUTTON", L"维修管理", WS_VISIBLE | WS_CHILD, 90, 180, 120, 40, hWnd, (HMENU)ID_BTN_SERVICE, NULL, NULL);
-        CreateWindow(L"STATIC", L"对设备的维修进行管理", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 180, 480, 40, hWnd, NULL, NULL, NULL);
+        CreateWindow(L"BUTTON", L"设备状态管理", WS_VISIBLE | WS_CHILD, 90, 180, 120, 40, hWnd, (HMENU)ID_BTN_SERVICE, NULL, NULL);
+        CreateWindow(L"STATIC", L"对设备的状态进行管理", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 180, 480, 40, hWnd, NULL, NULL, NULL);
 
         CreateWindow(L"BUTTON", L"信息查询", WS_VISIBLE | WS_CHILD, 90, 240, 120, 40, hWnd, (HMENU)ID_BTN_QUERY, NULL, NULL);
         CreateWindow(L"STATIC", L"对实验中心的房间、账户、设备类别、设备的信息进行查询", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 240, 240, 480, 40, hWnd, NULL, NULL, NULL);

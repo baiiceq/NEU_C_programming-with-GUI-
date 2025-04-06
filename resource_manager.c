@@ -412,7 +412,9 @@ bool LoadServiceList(wchar_t* path)
 		else if (wcscmp(type, L"DamagedRegister") == 0) service->type = DamagedRegister;
 		else if (wcscmp(type, L"ServiceRegister") == 0) service->type = ServiceRegister;
 		else if (wcscmp(type, L"ServiceFinish") == 0) service->type = ServiceFinish;
-		else service->type = ScrapRegister;
+		else if (wcscmp(type,L"ScrapRegister")==0)service->type = ScrapRegister;
+		else if (wcscmp(type, L"UsingRegister") == 0)service->type = UsingRegister;
+		else service->type = UsingFinish;
 
 		LinkedList_pushback(resource_manager->service_list, service);
 	}
@@ -447,7 +449,9 @@ bool SaveServiceList(wchar_t* path)
 		case DamagedRegister: fwprintf(fp, L"DamagedRegister "); break;
 		case ServiceRegister: fwprintf(fp, L"ServiceRegister "); break;
 		case ServiceFinish: fwprintf(fp, L"ServiceFinish "); break;
-		default: fwprintf(fp, L"ScrapRegister "); break;
+		case ScrapRegister: fwprintf(fp, L"ScrapRegister "); break;
+		case UsingRegister: fwprintf(fp, L"UsingRegister "); break;
+		default: fwprintf(fp, L"UsingFinish "); break;
 		}
 		fwprintf(fp, L"%ls\n", service->reason);
 		temp = temp->next;

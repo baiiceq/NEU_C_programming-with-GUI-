@@ -20,7 +20,7 @@ typedef struct _IdManager
     int current_category_id;    // 设备类别ID
     int current_room_id;        // 房间ID
     int current_account_id;     // 账户ID
-	int current_service_id;     // 维修记录ID
+	int current_service_id;     // 设备管理记录ID
 }IdManager;
 
 // 获取一个新ID

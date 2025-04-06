@@ -11,7 +11,7 @@ typedef struct _ResourceManager
 	LinkedList* equipment_list;    // 实验设备
 	LinkedList* category_list;     // 实验设备类型
 	LinkedList* laboratory_list;   // 实验室
-	LinkedList* service_list;      // 维修记录
+	LinkedList* service_list;      // 设备管理记录
 }ResourceManager;
 
 

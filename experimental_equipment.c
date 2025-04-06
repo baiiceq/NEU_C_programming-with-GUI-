@@ -354,9 +354,9 @@ bool ChangeExperimentalCategory(ExperimentalEquipment* eq, Category* newcategory
 
 
 //E表示equipment的查找
-LinkedList* EFindByName(LinkedList* eqlist,char* name)
+LinkedList* EFindByName(LinkedList* eqlist,wchar_t* name)
 {
-	if (name == "\n")
+	if (name == L"\n")
 	{
 		return eqlist;
 	}
@@ -365,7 +365,7 @@ LinkedList* EFindByName(LinkedList* eqlist,char* name)
     while (temp)
     {
         ExperimentalEquipment* eq = (ExperimentalEquipment*)temp->data;
-        if (strcmp(eq->name, name))
+        if (!wcscmp(eq->name, name))
             LinkedList_pushback(list, eq);
         temp = temp-> next;
     }
