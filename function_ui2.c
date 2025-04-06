@@ -478,6 +478,7 @@ LRESULT CALLBACK ChangeUserUsernameWndProc(HWND hWnd, UINT msg, WPARAM wParam, L
 
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
+		ShowWindow(hwndAdminManagement, SW_SHOW);
 		break;
 
 	case WM_DESTROY:

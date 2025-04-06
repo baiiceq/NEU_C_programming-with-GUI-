@@ -27,9 +27,10 @@
 #define IDC_STATIC_1 10001
 #define IDC_LISTVIEW 100007
 #define IDC_BUTTON_EXIT 2018
+#define IDC_COMBOX_STATE 2019
+#define IDC_CHECKBOX_STATE 2020
 
 void ShowInfoManagementWindow(HWND hWnd);
 
-void ShowSortWindow(HWND hWnd);
 
 

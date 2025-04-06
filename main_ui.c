@@ -173,6 +173,38 @@ LRESULT CALLBACK RegisterWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+void ShowLoginWindow(HWND hWnd)
+{
+    WNDCLASS wc = { 0 };
+    wc.lpfnWndProc = LoginWndProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = L"LoginWindow";
+
+    RegisterClass(&wc);
+
+    hwndLogin = CreateWindow(L"LoginWindow", L"µÇÂ¼", WS_OVERLAPPED | WS_SYSMENU,
+        400, 300, 400, 300, hWnd, NULL, GetModuleHandle(NULL), NULL);
+
+    ShowWindow(hwndLogin, SW_SHOW);
+    UpdateWindow(hwndLogin);
+}
+
+void ShowRegisterWindow(HWND hWnd)
+{
+    WNDCLASS wc = { 0 };
+    wc.lpfnWndProc = RegisterWndProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = L"RegisterWindow";
+
+    RegisterClass(&wc);
+
+    hwndRegister = CreateWindow(L"RegisterWindow", L"×¢²á", WS_OVERLAPPED | WS_SYSMENU,
+        400, 300, 400, 300, hWnd, NULL, GetModuleHandle(NULL), NULL);
+
+    ShowWindow(hwndRegister, SW_SHOW);
+    UpdateWindow(hwndRegister);
+}
+
 LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -215,15 +247,19 @@ LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             ShowServiceWindow(hWnd);
             break;
         case ID_BTN_QUERY:
+            ShowWindow(hwndAdminManagement, SW_HIDE);
             ShowQueryWindow(hWnd);
             break;
         case ID_BTN_SORT:
-            //ShowSortWindow(hWnd);
+            ShowWindow(hwndAdminManagement, SW_HIDE);
+            ShowSortWindow(hWnd);
             break;
         case ID_BTN_STATISTICS:
+            ShowWindow(hwndAdminManagement, SW_HIDE);
             ShowStatisticsWindow(hWnd);
             break;
         case ID_BTN_SYSTEM_MAINT:
+            ShowWindow(hwndAdminManagement, SW_HIDE);
             ShowSystemMaintenanceWindow(hWnd);
             break;
         case ID_BTN_EXIT:
@@ -289,3 +325,4 @@ void ShowAdminManagementWindow(HWND hWnd)
     ShowWindow(hwndAdminManagement, SW_SHOW);
     UpdateWindow(hwndAdminManagement);
 }
+

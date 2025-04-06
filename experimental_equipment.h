@@ -15,7 +15,8 @@ typedef enum _EquipmentState
 	Lost,      // 遗失
 	Damaged,   // 损坏（未在维修）
 	Scrapped,  // 报废
-	Repairing  // 正在维修
+	Repairing,  // 正在维修
+	None
 }EquipmentState;
 
 typedef struct _ExperimentalEquipment
@@ -28,6 +29,8 @@ typedef struct _ExperimentalEquipment
 	wchar_t purchase_date[DATE_LENGTH];          // 购入日期 (YYYY-MM-DD)
 	EquipmentState state;                          // 设备状态
 }ExperimentalEquipment;
+
+void state_to_string(EquipmentState state, wchar_t* string);
 
 ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* name, int room_id, int price, wchar_t* purchase_date);
 

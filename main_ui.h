@@ -26,5 +26,4 @@
 void ShowLoginWindow(HWND hWnd);
 void ShowRegisterWindow(HWND hWnd);
 void ShowAdminManagementWindow(HWND hWnd);
-
 #endif // UI_H

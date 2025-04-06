@@ -4,7 +4,7 @@
 
 extern HWND hwndAdminManagement;
 
-HWND hwndfunc1;
+HWND hwndfunc1, hwndfunc2;
 HWND hMainTab;
 
 int GetInputNumber(HWND hwnd, int editControlID)
@@ -115,26 +115,26 @@ void CreateButtons1(HWND hWnd, int tabIndex)
             SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
         }
 
-        CreateWindow(L"STATIC", L"修改内容", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 390, 180, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"STATIC", L"修改内容", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 390, 140, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"新名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 220, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
-        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 220, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME_CHANGE, NULL, NULL);
+        CreateWindow(L"STATIC", L"新名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 180, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 180, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME_CHANGE, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"新价格", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 260, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
-        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 260, 130, 25, hWnd, (HMENU)IDC_EDIT_PRICE_CHANGE, NULL, NULL);
+        CreateWindow(L"STATIC", L"新价格", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 220, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 220, 130, 25, hWnd, (HMENU)IDC_EDIT_PRICE_CHANGE, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"新实验室", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 300, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
-        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 300, 130, 25, hWnd, (HMENU)IDC_EDIT_ROOM_ID_CHANGE, NULL, NULL);
+        CreateWindow(L"STATIC", L"新实验室", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 260, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 400, 260, 130, 25, hWnd, (HMENU)IDC_EDIT_ROOM_ID_CHANGE, NULL, NULL);
 
-        CreateWindow(L"STATIC", L"新时间", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 340, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"STATIC", L"新时间", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 300, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
         CreateWindowEx(0, DATETIMEPICK_CLASS, NULL,
             WS_BORDER | WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT,
-            400, 340, 130, 25, hWnd, (HMENU)IDC_DATEPICKER_DATE_CHANGE, GetModuleHandle(NULL), NULL);
+            400, 300, 130, 25, hWnd, (HMENU)IDC_DATEPICKER_DATE_CHANGE, GetModuleHandle(NULL), NULL);
 
-        CreateWindow(L"STATIC", L"新种类", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 380, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        CreateWindow(L"STATIC", L"新种类", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 340, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
         hComboBox = CreateWindow(L"COMBOBOX", NULL,
             WS_VISIBLE | WS_CHILD | CBS_DROPDOWN | WS_BORDER,
-            400, 380, 130, 300, hWnd, (HMENU)IDC_COMBOX_CATEGORY_CHANGE, GetModuleHandle(NULL), NULL);
+            400, 340, 130, 300, hWnd, (HMENU)IDC_COMBOX_CATEGORY_CHANGE, GetModuleHandle(NULL), NULL);
 
         temp = rm->category_list->head;
         for (size_t i = 0; i < count; i++)
@@ -147,12 +147,28 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         }
         SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
 
+        CreateWindow(L"STATIC", L"新状态", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 300, 380, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+        hComboBox = CreateWindow(L"COMBOBOX", NULL,
+            WS_VISIBLE | WS_CHILD | CBS_DROPDOWN | WS_BORDER,
+            400, 380, 130, 300, hWnd, (HMENU)IDC_COMBOX_STATE, GetModuleHandle(NULL), NULL);
+
+        for (int i = 0; i < 6; i++)
+        {
+            wchar_t buffer[16];
+            state_to_string((EquipmentState)i, buffer);
+            SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
+        }
+        SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+
         CreateWindowEx(0, L"BUTTON", L"是否修改时间",
             WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-            320, 420, 120, 30, hWnd, (HMENU)IDC_CHECKBOX_1, GetModuleHandle(NULL), NULL);
+            320, 415, 120, 30, hWnd, (HMENU)IDC_CHECKBOX_1, GetModuleHandle(NULL), NULL);
         CreateWindowEx(0, L"BUTTON", L"是否修改种类",
             WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-            440, 420, 120, 30, hWnd, (HMENU)IDC_CHECKBOX_2, GetModuleHandle(NULL), NULL);
+            440, 415, 120, 30, hWnd, (HMENU)IDC_CHECKBOX_2, GetModuleHandle(NULL), NULL);
+        CreateWindowEx(0, L"BUTTON", L"是否修改状态",
+            WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+            320, 450, 120, 30, hWnd, (HMENU)IDC_CHECKBOX_STATE, GetModuleHandle(NULL), NULL);
 
         HWND hListView = CreateWindowExW(0, WC_LISTVIEW, NULL,
             WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_EDITLABELS,
@@ -193,6 +209,11 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         lvc.iSubItem = 5;
         ListView_InsertColumn(hListView, 5, &lvc);
 
+        lvc.pszText = L"设备状态";
+        lvc.cx = 80;
+        lvc.iSubItem = 5;
+        ListView_InsertColumn(hListView, 6, &lvc);
+
         temp = rm->equipment_list->head;
         count = rm->equipment_list->size;
         LVITEM lvItem;
@@ -223,6 +244,11 @@ void CreateButtons1(HWND hWnd, int tabIndex)
             ListView_SetItemText(hListView, i, 4, priceBuffer);
 
             ListView_SetItemText(hListView, i, 5, ee->purchase_date);
+
+            wchar_t stateBuffer[16];
+            state_to_string(ee->state, stateBuffer);
+            ListView_SetItemText(hListView, i, 6, stateBuffer);
+
         }
         break;
     }
@@ -633,11 +659,6 @@ void ShowInfoManagementWindow(HWND hWnd)
 
     ShowWindow(hwndfunc1, SW_SHOW);
     UpdateWindow(hwndfunc1);
-}
-
-
-void ShowSortWindow(HWND hWnd)
-{
 }
 
 
