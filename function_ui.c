@@ -75,6 +75,10 @@ void CreateButtons1(HWND hWnd, int tabIndex)
         DestroyWindow(hEdit);
     while ((hEdit = GetDlgItem(hWnd, IDC_EDIT_PASSWORD)) != NULL)
         DestroyWindow(hEdit); 
+    while ((hEdit = GetDlgItem(hWnd, IDC_EDIT_COUNT)) != NULL)
+        DestroyWindow(hEdit);
+    while ((hEdit = GetDlgItem(hWnd, IDC_BUTTON_COUNT)) != NULL)
+        DestroyWindow(hEdit);
 
     CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
         600, 495, 120, 40, hWnd, (HMENU)IDC_BUTTON_EXIT, GetModuleHandle(NULL), NULL);
@@ -87,11 +91,27 @@ void CreateButtons1(HWND hWnd, int tabIndex)
     case 0:
     {
         CreateWindow(L"BUTTON", L"添加", WS_VISIBLE | WS_CHILD,
-            600, 80, 120, 40, hWnd, (HMENU)IDC_BUTTON_ADD, GetModuleHandle(NULL), NULL);
+            600, 150, 120, 40, hWnd, (HMENU)IDC_BUTTON_ADD, GetModuleHandle(NULL), NULL);
         CreateWindow(L"BUTTON", L"删除", WS_VISIBLE | WS_CHILD,
             600, 240, 120, 40, hWnd, (HMENU)IDC_BUTTON_DELETE, GetModuleHandle(NULL), NULL);
         CreateWindow(L"BUTTON", L"修改", WS_VISIBLE | WS_CHILD,
             600, 400, 120, 40, hWnd, (HMENU)IDC_BUTTON_MODIFY, GetModuleHandle(NULL), NULL);
+
+        CreateWindow(L"STATIC", L"选择添加的数量", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 580, 60, 160, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
+
+        HWND hEdit = CreateWindowEx(
+            0, L"EDIT", L"0",
+            WS_CHILD | WS_VISIBLE | WS_BORDER | ES_NUMBER,
+            580, 100, 150, 25, hWnd, (HMENU)IDC_EDIT_COUNT, NULL, NULL);
+
+        HWND hSpin = CreateWindowEx(
+            0, UPDOWN_CLASS, NULL,
+            WS_CHILD | WS_VISIBLE | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_ARROWKEYS,
+            0, 0, 0, 0, hWnd, (HMENU)IDC_BUTTON_COUNT, NULL, NULL);
+
+        SendMessage(hSpin, UDM_SETBUDDY, (WPARAM)hEdit, 0);
+        SetWindowText(hEdit, L"1");
+        SendMessage(hSpin, UDM_SETRANGE, 0, MAKELPARAM(100, 1));
 
         CreateWindow(L"STATIC", L"设备名字", WS_VISIBLE | WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 40, 60, 100, 25, hWnd, (HMENU)IDC_STATIC_1, NULL, NULL);
         CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 160, 60, 130, 25, hWnd, (HMENU)IDC_EDIT_NAME, NULL, NULL);

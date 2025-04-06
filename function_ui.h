@@ -29,6 +29,8 @@
 #define IDC_BUTTON_EXIT 2018
 #define IDC_COMBOX_STATE 2019
 #define IDC_CHECKBOX_STATE 2020
+#define IDC_EDIT_COUNT 2021
+#define IDC_BUTTON_COUNT 2022
 
 void ShowInfoManagementWindow(HWND hWnd);
 

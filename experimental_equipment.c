@@ -50,6 +50,17 @@ ExperimentalEquipment* CreateExperimentalEquipment(Category* category, wchar_t* 
 
 }
 
+ExperimentalEquipment* CreateEquipmentByCopy(ExperimentalEquipment* copy_ee)
+{
+    ExperimentalEquipment* ee = (ExperimentalEquipment*)malloc(sizeof(ExperimentalEquipment));
+    ee->id = GetNewId(EquipmentID);
+    ee->category = copy_ee->category;
+    wcscpy_s(ee->name, EQUIPMENT_LENGTH, copy_ee->name);
+    ee->price = copy_ee->price;
+    ee->room_id = copy_ee->room_id;
+    wcscpy_s(ee->purchase_date, DATE_LENGTH, copy_ee->purchase_date);
+    ee->state = Idle;
+}
 void DestoryExperimentalEquipment(ExperimentalEquipment* experimental_equipment)
 {
     free(experimental_equipment);
@@ -182,35 +193,56 @@ void _AddExperimentalEquipment(HWND hWnd)
         return;
     }
 
-    LinkedList_pushback(rm->equipment_list, new_ee);
-    LinkedList_pushback(labroom->equipments_list, &(new_ee->id));
+    int count = GetInputNumber(hWnd, IDC_EDIT_COUNT);
+    ExperimentalEquipment* add_ee = new_ee;
+    for (int i = 0; i < count; i++)
+    {
+        if (!i)
+        {
+            add_ee = new_ee;
+        }
+        else
+        {
+            add_ee = CreateEquipmentByCopy(new_ee);
 
-    HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
-    index = ListView_GetItemCount(hListView);
+        }
 
-    LVITEM lvItem;
-    lvItem.mask = LVIF_TEXT;
-    lvItem.iItem = index; 
-    lvItem.iSubItem = 0;
+        LinkedList_pushback(rm->equipment_list, add_ee);
+        LinkedList_pushback(labroom->equipments_list, &(add_ee->id));
 
-    wchar_t idBuffer[16];
-    swprintf_s(idBuffer, 16, L"%d", new_ee->id);
-    lvItem.pszText = idBuffer;
-    ListView_InsertItem(hListView, &lvItem);
+        HWND hListView = GetDlgItem(hWnd, IDC_LISTVIEW);
+        index = ListView_GetItemCount(hListView);
 
-    ListView_SetItemText(hListView, index, 1, new_ee->name);
+        LVITEM lvItem;
+        lvItem.mask = LVIF_TEXT;
+        lvItem.iItem = index;
+        lvItem.iSubItem = 0;
+
+        wchar_t idBuffer[16];
+        swprintf_s(idBuffer, 16, L"%d", add_ee->id);
+        lvItem.pszText = idBuffer;
+        ListView_InsertItem(hListView, &lvItem);
+
+        ListView_SetItemText(hListView, index, 1, add_ee->name);
+
+        ListView_SetItemText(hListView, index, 2, add_ee->category->name);
+
+        wchar_t roomBuffer[16];
+        swprintf_s(roomBuffer, 16, L"%d", add_ee->room_id);
+        ListView_SetItemText(hListView, index, 3, roomBuffer);
+
+        wchar_t priceBuffer[16];
+        swprintf_s(priceBuffer, 16, L"%d", add_ee->price);
+        ListView_SetItemText(hListView, index, 4, priceBuffer);
+
+        ListView_SetItemText(hListView, index, 5, add_ee->purchase_date);
+
+        wchar_t stateBuffer[16];
+        state_to_string(add_ee->state, stateBuffer);
+        ListView_SetItemText(hListView, index, 6, stateBuffer);
+    }
+
     
-    ListView_SetItemText(hListView, index, 2, new_ee->category->name);
-
-    wchar_t roomBuffer[16];
-    swprintf_s(roomBuffer, 16, L"%d", new_ee->room_id);
-    ListView_SetItemText(hListView, index, 3, roomBuffer);
-
-    wchar_t priceBuffer[16];
-    swprintf_s(priceBuffer, 16, L"%d", new_ee->price);
-    ListView_SetItemText(hListView, index, 4, priceBuffer);
-
-    ListView_SetItemText(hListView, index, 5, new_ee->purchase_date)
     MessageBox(hWnd, L"成功添加设备", L"提示", MB_OK);
 }
 
