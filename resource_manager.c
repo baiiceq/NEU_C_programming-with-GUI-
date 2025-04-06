@@ -1,6 +1,7 @@
 #include "resource_manager.h"
 #include "account.h"
 #include "category.h"
+#include "service.h"
 #include "experimental_equipment.h"
 #include <string.h>
 #include <windows.h>
@@ -22,6 +23,7 @@ ResourceManager* GetResourceManage()
         instance->equipment_list = CreateLinkedList();
         instance->laboratory_list = CreateLinkedList();
 		instance->category_list = CreateLinkedList();
+		instance->service_list = CreateLinkedList();
     }
 
     return instance;
@@ -38,6 +40,8 @@ void _LoadResource()
 	LoadCategoryList(path);
 	wcscpy_s(path, 100, L"equipment.txt");
 	LoadEquipmentList(path);
+	wcscpy_s(path, 100, L"service.txt");
+	LoadServiceList(path);
 }
 
 void SaveResource()
@@ -51,6 +55,8 @@ void SaveResource()
 	SaveEquipmentList(path);
 	wcscpy_s(path, 100, L"laboratory.txt");
 	SaveLaboratoryList(path);
+	wcscpy_s(path, 100, L"service.txt");
+	SaveServiceList(path);
 }
 
 void DestoryResourceManage()
@@ -62,7 +68,7 @@ void DestoryResourceManage()
 	destoryLinkedList(instance->equipment_list);
 	destoryLinkedList(instance->laboratory_list);
 	destoryLinkedList(instance->category_list);
-	//destoryLinkedList(instance->service_list);
+	destoryLinkedList(instance->service_list);
 	instance = NULL;
 }
 
@@ -363,6 +369,90 @@ bool SaveLaboratoryList(wchar_t* path)
 		fwprintf(fp, L"%d %ls\n", laboratory->id, laboratory->name);
 		temp = temp->next;
 	}
+	return True;
+}
+
+bool LoadServiceList(wchar_t* path)
+{
+	FILE* fp = _wfopen(path, L"rb");
+	if (fp == NULL)
+	{
+		printf("文件打开失败\n");
+		return False;
+	}
+	wchar_t bom;
+	fread(&bom, sizeof(wchar_t), 1, fp);
+	if (bom != 0xFEFF)
+	{
+		wprintf(L"不是有效的UTF-16文件！\n");
+		fclose(fp);
+		return False;
+	}
+	ResourceManager* resource_manager = GetResourceManage();
+	while (!feof(fp))
+	{
+		Service* service = (Service*)malloc(sizeof(Service));
+		if (service == NULL)
+		{
+			printf("内存分配失败\n");
+			fclose(fp);
+			return False;
+		}
+		fwscanf_s(fp, L"%d %d %ls %d %ls ",
+			&service->service_id,
+			&service->equipment_id,
+			service->equipment_name, EQUIPMENT_LENGTH,
+			&service->user_id,
+			service->data, DATE_LENGTH);
+
+		wchar_t type[50], reason[NOTE_LENGTH];
+		fwscanf_s(fp, L"%ls %ls\n", type, 50, service->reason, NOTE_LENGTH);
+
+		if (wcscmp(type, L"LostRegister") == 0) service->type = LostRegister;
+		else if (wcscmp(type, L"DamagedRegister") == 0) service->type = DamagedRegister;
+		else if (wcscmp(type, L"ServiceRegister") == 0) service->type = ServiceRegister;
+		else if (wcscmp(type, L"ServiceFinish") == 0) service->type = ServiceFinish;
+		else service->type = ScrapRegister;
+
+		LinkedList_pushback(resource_manager->service_list, service);
+	}
+	fclose(fp);
+	return True;
+}
+
+bool SaveServiceList(wchar_t* path)
+{
+	FILE* fp = _wfopen(path, L"wb");
+	if (fp == NULL)
+	{
+		printf("文件打开失败\n");
+		return False;
+	}
+	wchar_t bom = 0xFEFF;
+	fwrite(&bom, sizeof(wchar_t), 1, fp);
+	Node* temp = GetResourceManage()->service_list->head->next;
+	while (temp)
+	{
+		wchar_t wstr[100]=L"";
+		Service* service = (Service*)temp->data;
+		fwprintf(fp, L"%d %d %ls %d %ls ",
+			service->service_id,
+			service->equipment_id,
+			service->equipment_name,
+			service->user_id,
+			service->data);
+		switch (service->type)
+		{
+		case LostRegister: fwprintf(fp, L"LostRegister "); break;
+		case DamagedRegister: fwprintf(fp, L"DamagedRegister "); break;
+		case ServiceRegister: fwprintf(fp, L"ServiceRegister "); break;
+		case ServiceFinish: fwprintf(fp, L"ServiceFinish "); break;
+		default: fwprintf(fp, L"ScrapRegister "); break;
+		}
+		fwprintf(fp, L"%ls\n", service->reason);
+		temp = temp->next;
+	}
+	fclose(fp);
 	return True;
 }
 

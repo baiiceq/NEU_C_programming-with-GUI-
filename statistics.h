@@ -34,6 +34,10 @@ extern HWND hwndAdminManagement;
 #define IDC_EQUIPMENT_STATS_RESULT_LIST 1127
 #define IDC_CHECK_BY_STATUS 1128
 #define IDC_STATUS_COMBO 1129 
+#define IDC_BTN_CATEGORY_CHART 1130
+#define IDC_BTN_LABROOM_CHART 1131
+#define IDC_BTN_STATUS_CHART 1132
+
 
 // 账户统计控件ID
 #define IDC_CHECK_BY_ACCOUNT_TYPE 1130
@@ -513,8 +517,8 @@ typedef struct _PieChartData {
 // 全局变量
 static PieChartData labRoomPieData;
 static PieChartData categoryPieData;
-static BOOL showLabRoomChart = TRUE;  // TRUE显示实验室统计图，FALSE显示类别统计图
-static HWND hSwitchButton = NULL;     // 切换按钮句柄
+static PieChartData statusPieData;
+static BOOL showLabRoomChart = 1; //1为实验室统计，2为设备类别统计，3为设备状态统计
 
 // 初始化扇形图数据
 void InitPieChartData(PieChartData* data, const wchar_t* title) 
@@ -599,6 +603,45 @@ void CollectCategoryEquipmentStats() {
         }
     }
 }
+
+// 收集设备状态统计数据
+void CollectEquipmentStatusStats()
+{
+    ResourceManager* rm = GetResourceManage();
+    if (!rm || !rm->equipment_list) return;
+
+    InitPieChartData(&statusPieData, L"设备状态统计");
+
+    // 定义设备状态
+    const wchar_t* statusLabels[] = { L"正在使用", L"空闲", L"遗失", L"损坏", L"报废", L"正在维修" };
+    EquipmentState states[] = { Using, Idle, Lost, Damaged, Scrapped, Repairing };
+
+    for (int i = 0; i < 6; i++)
+    {
+        EquipmentsCount count;
+        count.countByState = 1;
+        count.state = states[i];
+        count.countByCategory = -1;
+        count.countByRoom = -1;
+        count.countByDate = -1;
+        count.countByPrice = -1;
+        count.count = 0;
+
+        CountEquipment(rm->equipment_list, &count);
+
+        if (count.count > 0)
+        {
+            // 生成颜色 - 使用不同的RGB值
+            COLORREF color = RGB(
+                50 + (i * 61) % 200,
+                50 + ((i + 5) * 101) % 200,
+                50 + ((i + 9) * 173) % 200
+            );
+            AddPieChartItem(&statusPieData, statusLabels[i], count.count, color);
+        }
+    }
+}
+
 
 // 绘制扇形图
 void DrawPieChart(HDC hdc, RECT rect, const PieChartData* pieData) {
@@ -722,9 +765,17 @@ LRESULT CALLBACK PresetStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
         CreateWindow(L"STATIC", L"预设统计", WS_VISIBLE | WS_CHILD | SS_CENTER,
             300, 10, 200, 30, hWnd, NULL, NULL, NULL);
 
-        // 创建切换图表按钮
-        hSwitchButton = CreateWindow(L"BUTTON", L"切换到类别统计图", WS_VISIBLE | WS_CHILD,
-            300, 460, 200, 30, hWnd, (HMENU)IDC_BTN_SWITCH_CHART, NULL, NULL);
+        // 创建类别统计图按钮
+        CreateWindow(L"BUTTON", L"类别统计图", WS_VISIBLE | WS_CHILD,
+            90, 460, 200, 30, hWnd, (HMENU)IDC_BTN_CATEGORY_CHART, NULL, NULL);
+
+		//创建实验室统计图按钮
+		CreateWindow(L"BUTTON", L"实验室统计图", WS_VISIBLE | WS_CHILD,
+			300, 460, 200, 30, hWnd, (HMENU)IDC_BTN_LABROOM_CHART, NULL, NULL);
+
+		//创建状态统计图按钮
+		CreateWindow(L"BUTTON", L"设备状态统计图", WS_VISIBLE | WS_CHILD,
+			510, 460, 200, 30, hWnd, (HMENU)IDC_BTN_STATUS_CHART, NULL, NULL);
 
         // 创建返回按钮
         CreateWindow(L"BUTTON", L"返回", WS_VISIBLE | WS_CHILD,
@@ -733,6 +784,7 @@ LRESULT CALLBACK PresetStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
         // 收集统计数据
         CollectLabRoomEquipmentStats();
         CollectCategoryEquipmentStats();
+		CollectEquipmentStatusStats();
 
         // 创建更好的字体
         hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
@@ -765,12 +817,12 @@ LRESULT CALLBACK PresetStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
         DeleteObject(hBrush);
 
         // 绘制扇形图
-        if (showLabRoomChart) {
+        if (showLabRoomChart == 1)
             DrawPieChart(hdc, chartRect, &labRoomPieData);
-        }
-        else {
+        else if (showLabRoomChart == 2)
             DrawPieChart(hdc, chartRect, &categoryPieData);
-        }
+        else
+            DrawPieChart(hdc, chartRect, &statusPieData);
 
         EndPaint(hWnd, &ps);
         break;
@@ -778,22 +830,18 @@ LRESULT CALLBACK PresetStatsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
-        case IDC_BTN_SWITCH_CHART:
-            // 切换图表类型
-            showLabRoomChart = !showLabRoomChart;
-
-            // 更新按钮文本
-            if (showLabRoomChart) {
-                SetWindowText(hSwitchButton, L"切换到类别统计图");
-            }
-            else {
-                SetWindowText(hSwitchButton, L"切换到实验室统计图");
-            }
-
-            // 重绘窗口
+        case IDC_BTN_CATEGORY_CHART:
+            showLabRoomChart = 2;
             RefreshPresetStatsWindow(hWnd);
             break;
-
+		case IDC_BTN_LABROOM_CHART:
+			showLabRoomChart = 1;
+			RefreshPresetStatsWindow(hWnd);
+			break;
+		case IDC_BTN_STATUS_CHART:
+			showLabRoomChart = 3;
+			RefreshPresetStatsWindow(hWnd);
+			break;
         case IDC_BTN_STATS_BACK:
             // 返回主统计界面
             ShowWindow(hwndPresetStats, SW_HIDE);

@@ -32,6 +32,9 @@ int GetNewId(IdType type)
         break;
     case RoomID:
         return ++instance->current_room_id;
+	case ServiceID:
+		return ++instance->current_service_id;
+		break;
         break;
     }
 }
@@ -53,10 +56,11 @@ bool SaveId()
         //system("pause");
         return False;
     }
-    fprintf(fp, "%d %d %d %d\n",instance->current_account_id,
+    fprintf(fp, "%d %d %d %d %d\n",instance->current_account_id,
         instance->current_category_id,
         instance->current_equipment_id,
-        instance->current_room_id);
+        instance->current_room_id,
+        instance->current_service_id);
 
     fclose(fp);
     return True;
@@ -73,10 +77,11 @@ bool LoadId()
     }
     while (!feof(fp))
     {
-        fscanf_s(fp, "%d %d %d %d",&instance->current_account_id,
+        fscanf_s(fp, "%d %d %d %d %d\n",&instance->current_account_id,
             &instance->current_category_id,
             &instance->current_equipment_id,
-            &instance->current_room_id);
+            &instance->current_room_id,
+            &instance->current_service_id);
     }
     fclose(fp);
 }

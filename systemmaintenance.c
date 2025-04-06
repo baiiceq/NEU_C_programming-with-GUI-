@@ -179,6 +179,11 @@ bool BackupSystemData(int adminId)
     snprintf(path, 100, "backups/%s/laboratory.txt", formattedTime);
     mbstowcs_s(&converted_chars, wpath, 100, path, _TRUNCATE);
     SaveLaboratoryList(wpath);
+
+	snprintf(path, 100, "backups/%s/service.txt", formattedTime);
+	mbstowcs_s(&converted_chars, wpath, 100, path, _TRUNCATE);
+	SaveServiceList(wpath);
+
     LogSystemOperation("系统备份", adminId);
 
     printf("系统数据备份完成，保存在: %s\n", backupDir);
@@ -204,6 +209,8 @@ bool RestoreSystemData(int adminId,wchar_t* formattedtime)
     LoadCategoryList(path);
     swprintf_s(path, sizeof(path) / sizeof(wchar_t), L"backups/%s/equipment.txt", formattedtime);
     LoadEquipmentList(path);
+	swprintf_s(path, sizeof(path) / sizeof(wchar_t), L"backups/%s/service.txt", formattedtime);
+	LoadServiceList(path);
     SaveResource();
 	MessageBox(NULL, L"数据恢复成功，请手动重启", L"提示", MB_OK | MB_ICONINFORMATION);
     ExitProcess(0);

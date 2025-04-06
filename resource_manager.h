@@ -11,6 +11,7 @@ typedef struct _ResourceManager
 	LinkedList* equipment_list;    // 实验设备
 	LinkedList* category_list;     // 实验设备类型
 	LinkedList* laboratory_list;   // 实验室
+	LinkedList* service_list;      // 维修记录
 }ResourceManager;
 
 
@@ -33,6 +34,9 @@ bool SaveCategoryList(wchar_t*);
 
 bool LoadLaboratoryList(wchar_t*);
 bool SaveLaboratoryList(wchar_t*);
+
+bool LoadServiceList(wchar_t*);
+bool SaveServiceList(wchar_t*);
 
 bool SaveBackUp(char* time, char* formattedTime);
 

@@ -15,7 +15,7 @@
 #define IDC_ACCOUNT_TYPE 108
 
 #define ID_BTN_INFO_MANAGE    201
-#define ID_BTN_ADJUST_MANAGE  202
+#define ID_BTN_SERVICE        202
 #define ID_BTN_QUERY          203
 #define ID_BTN_SORT           204
 #define ID_BTN_STATISTICS     205
