@@ -469,6 +469,11 @@ LRESULT CALLBACK ChangeUserUsernameWndProc(HWND hWnd, UINT msg, WPARAM wParam, L
 			Account* account = FindById(userId);
 			if (account == NULL)
 				break;
+			if (IsValidUsername(newUsername) == False)
+			{
+				MessageBox(hWnd, L"用户名不符合规则！", L"错误", MB_OK | MB_ICONERROR);
+				break;
+			}
 			wcscpy_s(account->user_name, USER_NMAE_LENGTH, newUsername);
 			MessageBox(hWnd, L"用户名修改成功！", L"提示", MB_OK | MB_ICONINFORMATION);
 			break;
@@ -715,6 +720,10 @@ bool ResetUserPassword(int userId, const wchar_t* newPassword)
 	Account* account = FindById(userId);
 	if (account == NULL)
 	{
+		return False;
+	}
+	if (!IsValidPassword(newPassword)) {
+		MessageBox(NULL, L"密码不符合规则！", L"错误", MB_OK | MB_ICONERROR);
 		return False;
 	}
 	wcscpy_s(account->user_password, USER_PASSWORD_LENGTH, newPassword);

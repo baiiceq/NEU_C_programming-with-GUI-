@@ -189,6 +189,8 @@ LRESULT CALLBACK ServiceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 		SendMessage(hServiceTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"ServiceRegister");
 		SendMessage(hServiceTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"ServiceFinish");
 		SendMessage(hServiceTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"ScrapRegister");
+		SendMessage(hServiceTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"UsingRegister");
+		SendMessage(hServiceTypeCombo, CB_ADDSTRING, 0, (LPARAM)L"UsingFinish");
 		SendMessage(hServiceTypeCombo, CB_SETCURSEL, 0, 0); // 设置默认选择项
 
 
@@ -290,6 +292,9 @@ LRESULT CALLBACK ServiceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 				break;
 			case UsingRegister:
 				swprintf_s(addBuffter, 300, L"%ls操作类型:%ls\n", addBuffter, L"UsingRegister");
+				break;
+			case UsingFinish:
+				swprintf_s(addBuffter, 300, L"%ls操作类型:%ls\n", addBuffter, L"UsingFinish");
 				break;
 			}
 			swprintf_s(addBuffter, 300, L"%ls操作描述:%ls", addBuffter, serviceDescription);
