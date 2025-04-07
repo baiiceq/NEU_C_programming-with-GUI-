@@ -122,7 +122,7 @@ void DDeleteService(Service* service)
 
 
 extern EquipmentManagement* em;
-HWND hwndServiceManagement;
+static HWND hwndServiceManagement;
 
 LRESULT CALLBACK ServiceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -250,6 +250,23 @@ LRESULT CALLBACK ServiceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			GetLocalTime(&st);
 			wchar_t date[DATE_LENGTH];
 			swprintf_s(date, DATE_LENGTH, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
+
+			if (type == ScrapRegister)
+			{
+				wchar_t syear[5] = L"";
+				wchar_t* end;
+				for (int i = 0;i < 4; i++)
+				{
+					syear[i] = ee->purchase_date[i];
+				}
+				syear[4] = L'\0';
+				long year = wcstol(syear, &end, 10);
+				if (st.wYear - year < ee->category->disposal_years)
+				{
+					MessageBox(hWnd, L"设备使用年限不足", L"错误", MB_OK | MB_ICONERROR);
+					break;
+				}
+			}
 
 			wchar_t addBuffter[300];
 			swprintf_s(addBuffter, 300, L"设备ID:%d\n设备名称:%ls\n操作人员ID:%d\n操作日期:%ls\n",

@@ -824,7 +824,7 @@ LRESULT CALLBACK UserMaintenanceWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		break;
 
 	case WM_DESTROY:
-		//ShowUserWindow
+		ShowWindow(hwndAdminManagement, SW_SHOW);
 		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
