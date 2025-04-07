@@ -167,7 +167,7 @@ void CountEquipment(LinkedList* list, EquipmentsCount* Count)
         bool is_roomid_conform = Count->countByRoom < 0 ||
             (Count->countByRoom >= 0 && Count->room_id == ee->room_id);
         bool is_date_conform = Count->countByDate < 0 ||
-            (strcmp(ee->purchase_date, Count->startDate) >= 0 && strcmp(ee->purchase_date, Count->endDate) <= 0);
+            (wcscmp(ee->purchase_date, Count->startDate) >= 0 && wcscmp(ee->purchase_date, Count->endDate) <= 0);
         bool is_price_conform = Count->countByPrice < 0 ||
             (ee->price >= Count->min_price && ee->price <= Count->max_price);
 		bool is_state_conform = Count->countByState < 0 ||
@@ -334,11 +334,7 @@ void ExecuteEquipmentStatistics(HWND hWnd, HWND hListView)
         lvi.pszText = L"日期范围";
         ListView_InsertItem(hListView, &lvi);
 
-        wchar_t startDate[DATE_LENGTH], endDate[DATE_LENGTH];
-        mbstowcs_s(NULL, startDate, DATE_LENGTH, count.startDate, _TRUNCATE);
-        mbstowcs_s(NULL, endDate, DATE_LENGTH, count.endDate, _TRUNCATE);
-
-        swprintf(buffer, 256, L"%s - %s", startDate, endDate);
+        swprintf(buffer, 256, L"%s - %s", count.startDate, count.endDate);
         ListView_SetItemText(hListView, itemIndex, 1, buffer);
         itemIndex++;
     }
@@ -667,13 +663,13 @@ void DrawPieChart(HDC hdc, RECT rect, const PieChartData* pieData) {
     DrawText(hdc, pieData->title, -1, &titleRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
     // 绘制扇形
-    int startAngle = 0;
-    int endAngle;
+    double startAngle = 0;
+    double endAngle;
 
     for (int i = 0; i < pieData->itemCount; i++) {
         if (pieData->items[i].value == 0) continue; 
 
-        endAngle = startAngle + (pieData->items[i].value * 360) / pieData->total;
+        endAngle = startAngle + (pieData->items[i].value * 360.0) / pieData->total;
 
         HBRUSH hBrush = CreateSolidBrush(pieData->items[i].color);
         HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
@@ -698,13 +694,13 @@ void DrawPieChart(HDC hdc, RECT rect, const PieChartData* pieData) {
     int legendX = rect.left + 50;
     int legendY = centerY + radius + 20;
     int legendBoxSize = 15;
-    int legendSpacing = 25;
+    int legendSpacing = 20;
     int legendsPerRow = 2;  // 每行显示的图例数
     int currentLegendInRow = 0;
     int originalLegendX = legendX;
 
     for (int i = 0; i < pieData->itemCount; i++) {
-        if (pieData->items[i].value == 0) continue; // 跳过无数据的项
+        if (pieData->items[i].value == 0) continue; 
 
         HBRUSH hBrush = CreateSolidBrush(pieData->items[i].color);
         HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
