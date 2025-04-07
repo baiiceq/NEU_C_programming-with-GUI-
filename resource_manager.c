@@ -369,6 +369,7 @@ bool SaveLaboratoryList(wchar_t* path)
 		fwprintf(fp, L"%d %ls\n", laboratory->id, laboratory->name);
 		temp = temp->next;
 	}
+	fclose(fp);
 	return True;
 }
 

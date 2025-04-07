@@ -272,9 +272,16 @@ LRESULT CALLBACK AdminManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         break;
 
     case WM_CLOSE:
-        em->current_account = NULL;
-        ShowWindow(hwndLogin, SW_SHOW);
+        /*em->current_account = NULL;
+        ShowWindow(hwndAdminManagement, SW_HIDE);
+        ShowLoginWindow(hWnd);*/
+        DestroyWindow(hwndAdminManagement);
         break;
+    case WM_DESTROY:
+		hwndAdminManagement = NULL;
+        em->current_account = NULL;
+        ShowLoginWindow(hWnd);
+		break;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
@@ -353,8 +360,12 @@ LRESULT CALLBACK ExperimenterManagementWndProc(HWND hWnd, UINT msg, WPARAM wPara
         break;
 
     case WM_CLOSE:
-        em->current_account = NULL;
-        ShowWindow(hwndLogin, SW_SHOW);
+        DestroyWindow(hWnd);
+        break;
+    case WM_DESTROY:
+		em->current_account = NULL;
+		hwndAdminManagement = NULL;
+		ShowLoginWindow(hWnd);
         break;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -428,8 +439,12 @@ LRESULT CALLBACK UserManagementWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
         break;
 
     case WM_CLOSE:
+        DestroyWindow(hWnd);
+        break;
+    case WM_DESTROY:
         em->current_account = NULL;
-        ShowWindow(hwndLogin, SW_SHOW);
+        hwndAdminManagement = NULL;
+        ShowLoginWindow(hWnd);
         break;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
