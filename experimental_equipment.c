@@ -152,10 +152,20 @@ void _AddExperimentalEquipment(HWND hWnd)
         MessageBox(hWnd, L"请输入实验室ID！", L"提示", MB_OK | MB_ICONWARNING);
         return;
     }
+    if (!IsEditTextInteger(hEdit))
+    {
+        MessageBox(hWnd, L"实验室ID应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+        return;
+    }
     hEdit = GetDlgItem(hWnd, IDC_EDIT_PRICE);
     if (GetWindowTextLength(hEdit) == 0)
     {
         MessageBox(hWnd, L"请输入购买价格！", L"提示", MB_OK | MB_ICONWARNING);
+        return;
+    }
+    if (!IsEditTextInteger(hEdit))
+    {
+        MessageBox(hWnd, L"购买价格应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
         return;
     }
     hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME);
@@ -164,7 +174,6 @@ void _AddExperimentalEquipment(HWND hWnd)
         MessageBox(hWnd, L"请输入设备名字！", L"提示", MB_OK | MB_ICONWARNING);
         return;
     }
-
     room_id = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID);
     price = GetInputNumber(hWnd, IDC_EDIT_PRICE);
     GetDlgItemText(hWnd, IDC_EDIT_NAME, name, sizeof(name) / sizeof(wchar_t));
@@ -303,6 +312,11 @@ void _ChangeExperimentalEquipment(HWND hWnd)
         HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
         if (GetWindowTextLength(hEdit) != 0)
         {
+            if (!IsEditTextInteger(hEdit))
+            {
+                MessageBox(hWnd, L"实验室ID应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+                return;
+            }
             int room_id = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
             LabRoom* labroom = RoomId_to_LabRoom(room_id);
             if (labroom == NULL)
@@ -315,6 +329,11 @@ void _ChangeExperimentalEquipment(HWND hWnd)
         hEdit = GetDlgItem(hWnd, IDC_EDIT_PRICE_CHANGE);
         if (GetWindowTextLength(hEdit) != 0)
         {
+            if (!IsEditTextInteger(hEdit))
+            {
+                MessageBox(hWnd, L"购买价格应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+                return;
+            }
             int price = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
             ChangePrice(change_ee, price);
         }

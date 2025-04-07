@@ -1003,6 +1003,7 @@ LRESULT CALLBACK SortWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             ShowWindow(hwndAdminManagement, SW_SHOW);
             break;
         }
+        break;
     }
     case WM_DESTROY:
         hwndfuncSort = NULL;

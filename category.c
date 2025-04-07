@@ -63,6 +63,11 @@ void _AddCategory(HWND hWnd)
 		MessageBox(hWnd, L"请输入类型报废年限！", L"提示", MB_OK | MB_ICONWARNING);
 		return;
 	}
+	if (!IsEditTextInteger(hEdit))
+	{
+		MessageBox(hWnd, L"报废年限应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+		return;
+	}
 
 	int year = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID);
 
@@ -155,6 +160,11 @@ void _ChangeCategory(HWND hWnd)
 		HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
 		if (GetWindowTextLength(hEdit) != 0)
 		{
+			if (!IsEditTextInteger(hEdit))
+			{
+				MessageBox(hWnd, L"报废年限应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+				return;
+			}
 			int year = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
 			Ccategory->disposal_years = year;
 		}

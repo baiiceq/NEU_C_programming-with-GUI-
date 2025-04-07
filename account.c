@@ -2,6 +2,7 @@
 #include <string.h>
 #include "resource_manager.h"
 #include "account.h"
+#include "function_ui.h"
 #include <CommCtrl.h>
 
 Account* CreateAccount()
@@ -98,6 +99,11 @@ void _AddAccount(HWND hWnd)
 		MessageBox(hWnd, L"请输入实验室ID！", L"提示", MB_OK | MB_ICONWARNING);
 		return;
 	}
+	if (!IsEditTextInteger(hEdit))
+	{
+		MessageBox(hWnd, L"实验室ID应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+		return;
+	}
 	hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME);
 	if (GetWindowTextLength(hEdit) == 0)
 	{
@@ -185,6 +191,11 @@ void _ChangeAccount(HWND hWnd)
 		HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
 		if (GetWindowTextLength(hEdit) != 0)
 		{
+			if (!IsEditTextInteger(hEdit))
+			{
+				MessageBox(hWnd, L"实验室ID应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+				return;
+			}
 			int room_id = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
 			LabRoom* labroom = RoomId_to_LabRoom(room_id);
 			if (labroom == NULL)
