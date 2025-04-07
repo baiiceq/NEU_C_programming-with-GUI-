@@ -133,13 +133,13 @@ LRESULT CALLBACK RegisterWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
                 Account* account = CreateAccount();
                 switch (index)
                 {
-                case 1:
+                case 0:
                     account->account_type = Admin;
                     break;
-                case 2:
+                case 1:
                     account->account_type = Experimenter;
                     break;
-                case 3:
+                case 2:
                     account->account_type = User;
                     break;
                 }

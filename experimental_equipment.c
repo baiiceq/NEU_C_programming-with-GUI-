@@ -334,7 +334,7 @@ void _ChangeExperimentalEquipment(HWND hWnd)
                 MessageBox(hWnd, L"购买价格应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
                 return;
             }
-            int price = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID_CHANGE);
+            int price = GetInputNumber(hWnd, IDC_EDIT_PRICE_CHANGE);
             ChangePrice(change_ee, price);
         }
         hEdit = GetDlgItem(hWnd, IDC_EDIT_NAME_CHANGE);

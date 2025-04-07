@@ -700,8 +700,10 @@ bool QueryCategoryCondition(void* data, void* param)
         return False;
 
     // 判断年限范围
-    if ((query->min_year >= 0 && category->disposal_years < query->min_year) ||
-        (query->max_year >= 0 && category->disposal_years > query->max_year))
+    if (query->min_year >= 0 && category->disposal_years < query->min_year)
+        return False;
+
+    if (query->max_year >= 0 && category->disposal_years > query->max_year)
         return False;
 
     return True;  // 所有条件都符合
