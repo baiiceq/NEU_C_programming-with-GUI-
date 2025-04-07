@@ -1,4 +1,5 @@
 #include "function_ui.h"
+#include "ui_util.h"
 #include <wchar.h>
 #include <commctrl.h>
 
@@ -6,25 +7,6 @@ extern HWND hwndAdminManagement;
 
 HWND hwndfunc1, hwndfunc2;
 HWND hMainTab;
-
-int GetInputNumber(HWND hwnd, int editControlID)
-{
-    wchar_t text[256];
-    GetWindowText(GetDlgItem(hwnd, editControlID), text, 256);
-
-    // 将文本转换为整数
-    int number = _wtoi(text);
-
-    return number;
-}
-
-void ShowNumber(HWND hwnd, int number)
-{
-    wchar_t buffer[256];
-    swprintf(buffer, 256, L"数字: %d", number); 
-
-    MessageBox(hwnd, buffer, L"提示", MB_OK);
-}
 
 void CreateButtons1(HWND hWnd, int tabIndex)
 {

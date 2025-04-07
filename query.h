@@ -110,8 +110,10 @@ bool QueryEquipmenCondition(void* data, void* param)
         return False;
 
     // 判断价格范围
-    if ((query->min_price >= 0 && eq->price < query->min_price) ||
-        (query->max_price >= 0 && eq->price > query->max_price))
+    if (query->min_price >= 0 && eq->price < query->min_price)
+        return False;
+
+    if (query->max_price >= 0 && eq->price > query->max_price)
         return False;
 
     // 判断设备名称（模糊匹配）
@@ -189,6 +191,11 @@ void _QueryEquipment(HWND hWnd)
     HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID);
     if (GetWindowTextLength(hEdit) != 0)
     {
+        if (!IsEditTextInteger(hEdit))
+        {
+            MessageBox(hWnd, L"报废年限应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+            return;
+        }
         int room_id = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID);
         query.room_id = room_id;
     }
@@ -200,12 +207,22 @@ void _QueryEquipment(HWND hWnd)
     hEdit = GetDlgItem(hWnd, IDC_EDIT_MIN_PRICE);
     if (GetWindowTextLength(hEdit) != 0)
     {
+        if (!IsEditTextInteger(hEdit))
+        {
+            MessageBox(hWnd, L"价格应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+            return;
+        }
         int min_price = GetInputNumber(hWnd, IDC_EDIT_MIN_PRICE);
         query.min_price = min_price;
     }
     hEdit = GetDlgItem(hWnd, IDC_EDIT_MAX_PRICE);
     if (GetWindowTextLength(hEdit) != 0)
     {
+        if (!IsEditTextInteger(hEdit))
+        {
+            MessageBox(hWnd, L"价格应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+            return;
+        }
         int max_price = GetInputNumber(hWnd, IDC_EDIT_MAX_PRICE);
         query.max_price = max_price;
     }
@@ -509,6 +526,11 @@ void _QueryAccount(HWND hWnd)
     HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID);
     if (GetWindowTextLength(hEdit) != 0)
     {
+        if (!IsEditTextInteger(hEdit))
+        {
+            MessageBox(hWnd, L"报废年限应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+            return;
+        }
         int room_id = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID);
         query.room_id = room_id;
     }
@@ -643,6 +665,11 @@ void _QueryLabroom(HWND hWnd)
     hEdit = GetDlgItem(hWnd, IDC_EDIT_ROOM_ID);
     if (GetWindowTextLength(hEdit) != 0)
     {
+        if (!IsEditTextInteger(hEdit))
+        {
+            MessageBox(hWnd, L"实验室ID应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+            return;
+        }
         int room_id = GetInputNumber(hWnd, IDC_EDIT_ROOM_ID);
         query.id = room_id;
     }
@@ -757,12 +784,22 @@ void _QueryCategory(HWND hWnd)
     HWND hEdit = GetDlgItem(hWnd, IDC_EDIT_MIN_PRICE);
     if (GetWindowTextLength(hEdit) != 0)
     {
+        if (!IsEditTextInteger(hEdit))
+        {
+            MessageBox(hWnd, L"报废年限应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+            return;
+        }
         int min_price = GetInputNumber(hWnd, IDC_EDIT_MIN_PRICE);
         query.min_year = min_price;
     }
     hEdit = GetDlgItem(hWnd, IDC_EDIT_MAX_PRICE);
     if (GetWindowTextLength(hEdit) != 0)
     {
+        if (!IsEditTextInteger(hEdit))
+        {
+            MessageBox(hWnd, L"报废年限应该是一个整数！", L"提示", MB_OK | MB_ICONWARNING);
+            return;
+        }
         int max_price = GetInputNumber(hWnd, IDC_EDIT_MAX_PRICE);
         query.max_year = max_price;
     }
@@ -1117,6 +1154,7 @@ LRESULT CALLBACK QueryWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             ShowWindow(hwndAdminManagement, SW_SHOW);
             break;
         }
+        break;
     }
     case WM_DESTROY:
         hwndfuncQuery = NULL;
